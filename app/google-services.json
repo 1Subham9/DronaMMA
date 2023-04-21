@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1025310953082",
+    "project_id": "drona-aca92",
+    "storage_bucket": "drona-aca92.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1025310953082:android:84476474682c236164f5c3",
+        "android_client_info": {
+          "package_name": "com.amtron.dronamma"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1025310953082-sf5ns307at6k3sdd9o6a3k34nmnearud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO-OkVVJFJJJ8MVUTdVrPID8zq5wC9e6E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1025310953082-sf5ns307at6k3sdd9o6a3k34nmnearud.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
