@@ -70,8 +70,8 @@ class LoginActivity : AppCompatActivity() {
                         saveDataInSharedPref(uid.toString())
 
 
-//                        Toast.makeText(this, "Authentication successful.", Toast.LENGTH_SHORT)
-//                            .show()
+                        Toast.makeText(this, "Authentication successful.", Toast.LENGTH_SHORT)
+                            .show()
                         // Navigate to the main activity
                         val intent = Intent(this, HomeActivity::class.java)
                         startActivity(intent)
