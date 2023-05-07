@@ -33,17 +33,12 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="5dp"
-        android:elevation="10dp"
-        app:cardCornerRadius="20dp">
-
+        android:layout_height="wrap_content">
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="@color/white"
+            android:background="@color/under_line"
             android:padding="5dp"
             app:itemIconTint="@color/color_item_bottom_nav"
             app:itemTextColor="@color/color_item_bottom_nav"

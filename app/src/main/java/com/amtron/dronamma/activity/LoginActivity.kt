@@ -41,12 +41,6 @@ class LoginActivity : AppCompatActivity() {
         editor = sharedPreferences.edit()
 
 
-
-        binding.addNewUser.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
-        }
-
         binding.login.setOnClickListener {
 
             val email = binding.email.text.toString().trim()
