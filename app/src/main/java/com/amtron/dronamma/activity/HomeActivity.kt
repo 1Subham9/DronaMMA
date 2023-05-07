@@ -2,6 +2,7 @@ package com.amtron.dronamma.activity
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -49,7 +50,7 @@ class HomeActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_profile, R.id.nav_birthday
+                R.id.nav_profile, R.id.nav_add_inventory, R.id.nav_birthday
             ), drawerLayout
         )
 
@@ -58,8 +59,10 @@ class HomeActivity : AppCompatActivity() {
 
 
 
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // Check if the destination fragment is the one you want to target
+
             if (destination.id == R.id.nav_profile) {
                 // Run your specific function here
                 bottomCloseNavOpen()

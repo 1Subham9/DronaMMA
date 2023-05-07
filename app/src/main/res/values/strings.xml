@@ -9,4 +9,5 @@
     <string name="menu_add_student">Add Student</string>
     <string name="menu_attendance">Attendance</string>
     <string name="menu_payment">Payment</string>
+    <string name="menu_inventory">Inventory</string>
 </resources>
