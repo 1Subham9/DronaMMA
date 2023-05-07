@@ -7,12 +7,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import com.amtron.dronamma.R
 import com.amtron.dronamma.databinding.ActivityLogin2Binding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -26,8 +25,13 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login2)
+        binding = ActivityLogin2Binding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+
+
+
+        supportActionBar?.title = "Login"
 
         auth = FirebaseAuth.getInstance()
         fireStore = FirebaseFirestore.getInstance()
@@ -61,25 +65,24 @@ class LoginActivity : AppCompatActivity() {
             }
 
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        Log.d(TAG, "signInWithEmail:success")
-                        val user = auth.currentUser
+                if (task.isSuccessful) {
+                    Log.d(TAG, "signInWithEmail:success")
+                    val user = auth.currentUser
 
-                        val uid = user?.uid
-                        
-                        saveDataInSharedPref(uid.toString())
+                    val uid = user?.uid
+
+                    saveDataInSharedPref(uid.toString())
 
 
-                        Toast.makeText(this, "Authentication successful.", Toast.LENGTH_SHORT)
-                            .show()
-                        // Navigate to the main activity
-                        val intent = Intent(this, HomeActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        Log.w(TAG, "signInWithEmail:failure", task.exception)
-                        Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
-                    }
+                    Toast.makeText(this, "Authentication successful.", Toast.LENGTH_SHORT)
+                        .show()
+                    // Navigate to the main activity
+
+                } else {
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                    Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
                 }
+            }
 
 
         }
@@ -90,7 +93,6 @@ class LoginActivity : AppCompatActivity() {
     private fun saveDataInSharedPref(uid: String) {
 
 
-
         val dRef = fireStore.collection("Users").document(uid)
 
         dRef.get()
@@ -98,9 +100,13 @@ class LoginActivity : AppCompatActivity() {
                 if (documentSnapshot.exists()) {
                     val data = documentSnapshot.data
 
-                    editor.putString("user",  Gson().toJson(data) )
+                    editor.putString("user", Gson().toJson(data))
                     editor.apply()
 
+
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    finish()
 
                     Log.d(TAG, Gson().toJson(data))
                 } else {

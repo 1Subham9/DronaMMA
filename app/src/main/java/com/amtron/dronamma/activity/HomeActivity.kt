@@ -1,45 +1,68 @@
 package com.amtron.dronamma.activity
 
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Toast
+import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.amtron.dronamma.R
 import com.amtron.dronamma.adapter.ViewPagerAdapter
+import com.amtron.dronamma.databinding.ActivityHomeBinding
 import com.amtron.dronamma.fragment.AddStudent
 import com.amtron.dronamma.fragment.Attendance
 import com.amtron.dronamma.fragment.Payment
-import com.amtron.dronamma.model.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.google.android.material.navigation.NavigationView
 
 class HomeActivity : AppCompatActivity() {
 
-
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
-    lateinit var user: User
+    private lateinit var binding: ActivityHomeBinding
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
 
-        sharedPreferences = this.getSharedPreferences("Drona", MODE_PRIVATE)
-        editor = sharedPreferences.edit()
+//        setSupportActionBar(binding.appBarMain.toolbar)
 
-        user = Gson().fromJson(
-            sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_profile, R.id.nav_birthday
+            ), drawerLayout
         )
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            // Check if the destination fragment is the one you want to target
+            if (destination.id == R.id.nav_profile) {
+                // Run your specific function here
+                bottomCloseNavOpen()
+            }
 
-        Toast.makeText(this, "${user.name}", Toast.LENGTH_SHORT).show()
+            if (destination.id == R.id.nav_birthday) {
+                // Run your specific function here
+                bottomCloseNavOpen()
+            }
+        }
+
 
         val fragmentList = arrayListOf<Fragment>(
             Attendance(), AddStudent(), Payment()
@@ -61,15 +84,25 @@ class HomeActivity : AppCompatActivity() {
 
             when (it.itemId) {
 
-                R.id.attendance -> viewPage.currentItem = 0
+                R.id.attendance -> {
+                    viewPage.currentItem = 0
+                    navCloseBottomOpen()
+                }
 
-                R.id.addStudent -> viewPage.currentItem = 1
+                R.id.addStudent ->{
+                    viewPage.currentItem = 1
+                    navCloseBottomOpen()
+                }
 
-                R.id.payment -> viewPage.currentItem = 2
+                R.id.payment -> {
+                    viewPage.currentItem = 2
+                    navCloseBottomOpen()
+                }
             }
 
             return@setOnItemSelectedListener true
         }
+
 
 
         viewPage.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -89,26 +122,21 @@ class HomeActivity : AppCompatActivity() {
 
         })
 
+
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
 
                 when (viewPage.currentItem) {
-
                     2 -> {
                         viewPage.currentItem = 1
                     }
+
                     1 -> {
                         viewPage.currentItem = 0
                     }
+
                     else -> {
-
-
-
-
                         finish()
-
-
-
                     }
                 }
 
@@ -120,5 +148,22 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+    private fun bottomCloseNavOpen() {
+        findViewById<View>(R.id.app_bar_main).visibility = View.VISIBLE
+        findViewById<View>(R.id.bottom_nav_view).visibility = View.GONE
+    }
+
+    private fun navCloseBottomOpen() {
+        findViewById<View>(R.id.app_bar_main).visibility = View.GONE
+        findViewById<View>(R.id.bottom_nav_view).visibility = View.VISIBLE
+    }
+
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
 
 }
+
+

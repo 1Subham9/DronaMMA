@@ -1,9 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.DronaMMA" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.DronaMMA" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
     <style name="Theme.DronaMMA" parent="Base.Theme.DronaMMA" />
+
+    <style name="Theme.NavigationDrawerViews.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.NavigationDrawerViews.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

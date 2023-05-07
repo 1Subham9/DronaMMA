@@ -1,99 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
 
-    </data>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.LoginActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activity.LoginActivity">
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:src="@drawable/logo" />
+
+        <!--            <com.google.android.material.textfield.TextInputLayout-->
+        <!--                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_margin="5dp"-->
+        <!--                android:hint="Enter Email Address"-->
+        <!--                android:minHeight="48dp"-->
+        <!--                app:helperText="Required*"-->
+        <!--                app:helperTextTextColor="#ff0000">-->
+
+        <!--                <com.google.android.material.textfield.TextInputEditText-->
+        <!--                    android:id="@+id/email"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:drawablePadding="5dp"-->
+        <!--                    android:inputType="textEmailAddress" />-->
+        <!--            </com.google.android.material.textfield.TextInputLayout>-->
+
+
+        <!--            <com.google.android.material.textfield.TextInputLayout-->
+        <!--                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:hint="Enter Password"-->
+        <!--                android:layout_margin="5dp"-->
+        <!--                android:minHeight="48dp"-->
+        <!--                app:helperText="Required*"-->
+        <!--                app:helperTextTextColor="#ff0000">-->
+
+        <!--                <com.google.android.material.textfield.TextInputEditText-->
+        <!--                    android:id="@+id/enterPassword"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:drawablePadding="5dp"-->
+        <!--                    android:inputType="textPassword" />-->
+        <!--            </com.google.android.material.textfield.TextInputLayout>-->
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <EditText
+            android:id="@+id/enterPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="350dp"
-                android:src="@drawable/logo" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:hint="Enter Email Address"
-                android:minHeight="48dp"
-                app:helperText="Required*"
-                app:helperTextTextColor="#ff0000">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:inputType="textEmailAddress" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter Password"
-                android:layout_margin="5dp"
-                android:minHeight="48dp"
-                app:helperText="Required*"
-                app:helperTextTextColor="#ff0000">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/enterPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:inputType="textPassword" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/addNewUser"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:orientation="horizontal">
+                android:text="Add New User"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/addNewUser"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:textStyle="bold"
-                    android:text="Add New User" />
-
-                <TextView
-                    android:id="@+id/forgotPassword"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:textStyle="bold"
-                    android:text="Forgot Password" />
-
-            </LinearLayout>
-
-
-            <Button
-                android:id="@+id/login"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/forgotPassword"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="Login" />
-
+                android:layout_margin="10dp"
+                android:text="Forgot Password"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Login" />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

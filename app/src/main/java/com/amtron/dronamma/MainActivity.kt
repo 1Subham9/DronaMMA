@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
         val networkConnection = ConnectionLiveData(application)
 
         networkConnection.observe(this, Observer {
@@ -36,11 +37,11 @@ class MainActivity : AppCompatActivity() {
 
                 val user = sharedPreferences.getString("user", "").toString()
                 if (user.isEmpty()) {
-                    val intent = Intent(this, LoginActivity::class.java)
+                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    val intent = Intent(this, HomeActivity::class.java)
+                    val intent = Intent(this@MainActivity, HomeActivity::class.java)
                     startActivity(intent)
                     finish()
                 }

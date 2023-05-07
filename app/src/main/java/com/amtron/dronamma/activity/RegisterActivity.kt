@@ -4,10 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import com.amtron.dronamma.R
 import com.amtron.dronamma.databinding.ActivityRegisterBinding
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,7 +18,8 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_register)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
 
         fireBaseAuth = FirebaseAuth.getInstance()
@@ -31,7 +29,10 @@ class RegisterActivity : AppCompatActivity() {
         binding.register.setOnClickListener {
 
             fireBaseAuth
-                .createUserWithEmailAndPassword(binding.email.text.toString(), binding.enterPassword.text.toString()).addOnCompleteListener { task ->
+                .createUserWithEmailAndPassword(
+                    binding.email.text.toString(),
+                    binding.enterPassword.text.toString()
+                ).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         // User was created successfully
 
@@ -62,7 +63,7 @@ class RegisterActivity : AppCompatActivity() {
                         Toast.makeText(this, "User Created Successfully", Toast.LENGTH_SHORT).show()
                     } else {
                         // User creation failed
-                        Toast.makeText(this,"Failed to Create Account", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Failed to Create Account", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
