@@ -3,6 +3,7 @@ package com.amtron.dronamma.activity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -20,20 +21,24 @@ import com.amtron.dronamma.fragment.Attendance
 import com.amtron.dronamma.fragment.Payment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
-
+    private lateinit var actionBar: ActionBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
 //        setSupportActionBar(binding.appBarMain.toolbar)
+
+
+        actionBar = supportActionBar!!
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -47,8 +52,11 @@ class HomeActivity : AppCompatActivity() {
                 R.id.nav_profile, R.id.nav_birthday
             ), drawerLayout
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // Check if the destination fragment is the one you want to target
@@ -87,16 +95,22 @@ class HomeActivity : AppCompatActivity() {
                 R.id.attendance -> {
                     viewPage.currentItem = 0
                     navCloseBottomOpen()
+                    actionBar.title = "Drona"
+
                 }
 
                 R.id.addStudent ->{
                     viewPage.currentItem = 1
                     navCloseBottomOpen()
+                    actionBar.title = "Drona"
+
                 }
 
                 R.id.payment -> {
                     viewPage.currentItem = 2
                     navCloseBottomOpen()
+                    actionBar.title = "Drona"
+
                 }
             }
 
@@ -110,9 +124,15 @@ class HomeActivity : AppCompatActivity() {
 
                 when (position) {
 
-                    0 -> bottomNav.selectedItemId = R.id.attendance
-                    1 -> bottomNav.selectedItemId = R.id.addStudent
-                    2 -> bottomNav.selectedItemId = R.id.payment
+                    0 -> {
+                        bottomNav.selectedItemId = R.id.attendance
+                    }
+                    1 -> {
+                        bottomNav.selectedItemId = R.id.addStudent
+                    }
+                    2 ->{
+                        bottomNav.selectedItemId = R.id.payment
+                    }
 
                 }
 
@@ -144,6 +164,9 @@ class HomeActivity : AppCompatActivity() {
         }
 
         onBackPressedDispatcher.addCallback(callback)
+
+        navCloseBottomOpen()
+        actionBar.title = "Drona"
 
 
     }
