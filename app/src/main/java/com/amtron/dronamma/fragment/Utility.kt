@@ -123,6 +123,7 @@ class Utility : Fragment() {
                         student.className,
                         student.id,
                         student.batch,
+                        student.branch,
                         currentDate,
                         0
                     )

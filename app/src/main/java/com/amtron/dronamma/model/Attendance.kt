@@ -6,6 +6,7 @@ data class Attendance(
     val className: String? = null,
     val studentId: String? = null,
     val batch : String? = null,
+    val branch: String? = null,
     val date: String? = null,
     var present : Int? = null
 )

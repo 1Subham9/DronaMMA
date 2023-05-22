@@ -26,7 +26,7 @@
 
 
                 <TextView
-                    android:id="@+id/studentName"
+                    android:id="@+id/attendanceName"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
@@ -39,9 +39,9 @@
                 <CheckBox
                     android:id="@+id/checkbox_attendance"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="20dp"
                     android:fontFamily="@font/archivo_bold"
-                    android:text="Attendance"/>
+                    android:text="Present"/>
 
 
             </LinearLayout>
@@ -55,25 +55,31 @@
 
 
                 <TextView
+                    android:id="@+id/attendanceBatch"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:textStyle="bold"
+                    android:textSize="12sp"
                     android:textColor="@color/black"
                     android:text="Student Batch"/>
 
                 <TextView
+                    android:id="@+id/attendanceClass"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textStyle="bold"
+                    android:textSize="12sp"
                     android:textColor="@color/black"
                     android:layout_height="match_parent"
                     android:text="Student Class"/>
 
                 <TextView
+                    android:id="@+id/attendanceCheckDetails"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textStyle="italic"
+                    android:textSize="12sp"
                     android:textColor="@color/red"
                     android:layout_height="match_parent"
                     android:text="Check Details..>>"/>
