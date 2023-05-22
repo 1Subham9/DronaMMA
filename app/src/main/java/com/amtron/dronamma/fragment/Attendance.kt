@@ -5,12 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.amtron.dronamma.R
 import com.amtron.dronamma.databinding.FragmentAddStudentBinding
 import com.amtron.dronamma.databinding.FragmentAttendanceBinding
 
 
-class Attendance : Fragment() {
+class Attendance() : Fragment() {
 
     private lateinit var binding: FragmentAttendanceBinding
 
