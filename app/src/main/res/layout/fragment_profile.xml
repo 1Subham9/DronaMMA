@@ -2,13 +2,106 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/grey"
     android:layout_height="match_parent"
     tools:context=".fragment.Profile">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Profile" />
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/archivo_bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="Name: " />
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/archivo_bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="Akash Mathew" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/archivo_bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="Mobile: " />
+
+            <TextView
+                android:id="@+id/userMobile"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/archivo_bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="Akash Mathew" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/archivo_bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="Email Id: " />
+
+            <TextView
+                android:id="@+id/userEmail"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/archivo_bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="Akash Mathew" />
+
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Logout"/>
+
+
+    </LinearLayout>
 
 </FrameLayout>

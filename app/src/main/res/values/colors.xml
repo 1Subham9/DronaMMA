@@ -5,4 +5,6 @@
     <color name="red">#FF0000</color>
     <color name="under_line">#BDB8B8</color>
     <color name="grey">#666565</color>
+    <color name="imperial_red">#FF2400</color>
+
 </resources>

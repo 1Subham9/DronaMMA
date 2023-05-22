@@ -12,9 +12,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
-
     private lateinit var fireBaseAuth: FirebaseAuth
     private lateinit var firebaseFireSore: FirebaseFirestore
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +40,7 @@ class RegisterActivity : AppCompatActivity() {
 
                         val userInfo = mutableMapOf<String, Any>()
                         userInfo["isAdmin"] = 0
-                        userInfo["UserEmail"] = binding.email.toString()
+                        userInfo["UserEmail"] = binding.email.text.toString()
 
                         user?.let { it1 -> firebaseFireSore.collection("Users").document(it1.uid) }
                             ?.set(userInfo)
@@ -54,10 +54,6 @@ class RegisterActivity : AppCompatActivity() {
                                 // Document write failed
                                 Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
                             }
-
-
-
-
 
 
                         Toast.makeText(this, "User Created Successfully", Toast.LENGTH_SHORT).show()

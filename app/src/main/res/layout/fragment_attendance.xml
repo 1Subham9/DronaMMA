@@ -3,12 +3,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.Attendance">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Attendance" />
+        android:orientation="vertical">
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Search Name"
+            android:minHeight="48dp"
+            app:helperText="Required*"
+            app:helperTextTextColor="@color/imperial_red">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchStudentName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/baseline_person_search_24"
+                android:drawablePadding="5dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <TextView
+            android:id="@+id/selectDate"
+            android:drawableLeft="@drawable/baseline_calendar_month_24"
+            android:layout_width="match_parent"
+            android:drawablePadding="10dp"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:text="Select Data"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+
+
+    </LinearLayout>
 
 </FrameLayout>

@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.amtron.dronamma.databinding.ActivityLogin2Binding
+import com.amtron.dronamma.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
@@ -15,7 +15,7 @@ import com.google.gson.Gson
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityLogin2Binding
+    private lateinit var binding: ActivityLoginBinding
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
@@ -25,11 +25,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLogin2Binding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-
 
         supportActionBar?.title = "Login"
 
@@ -39,6 +36,13 @@ class LoginActivity : AppCompatActivity() {
 
         sharedPreferences = this.getSharedPreferences("Drona", MODE_PRIVATE)
         editor = sharedPreferences.edit()
+
+
+        binding.addNewUser.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
 
         binding.login.setOnClickListener {

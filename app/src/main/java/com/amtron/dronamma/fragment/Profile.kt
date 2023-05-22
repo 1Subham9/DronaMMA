@@ -1,30 +1,32 @@
 package com.amtron.dronamma.fragment
 
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.amtron.dronamma.R
+import com.amtron.dronamma.activity.LoginActivity
+import com.amtron.dronamma.activity.RegisterActivity
+import com.amtron.dronamma.databinding.FragmentProfileBinding
+import com.amtron.dronamma.databinding.FragmentSettingsBinding
+import com.amtron.dronamma.model.User
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Profile.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Profile : Fragment() {
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+    lateinit var user: User
 
-    }
+    private lateinit var binding: FragmentProfileBinding
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +34,36 @@ class Profile : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
+
+        sharedPreferences =
+            requireActivity().getSharedPreferences("Drona", AppCompatActivity.MODE_PRIVATE)
+        editor = sharedPreferences.edit()
+
+        user = Gson().fromJson(
+            sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
+        )
+
+
+        binding.userName.text = user.name
+        binding.userEmail.text = user.UserEmail
+        binding.userMobile.text = user.mobile.toString()
+
+
+        binding.logout.setOnClickListener {
+
+            editor.remove("user")
+            editor.apply()
+
+
+            val intent = Intent (requireActivity(), LoginActivity::class.java)
+            startActivity(intent)
+            requireActivity().finishAffinity()
+
+        }
+
+
+        return binding.root
     }
 
 

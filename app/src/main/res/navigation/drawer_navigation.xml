@@ -2,8 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/nav_profile"
-    android:id="@+id/drawer_navigation">
+    android:id="@+id/drawer_navigation"
+    app:startDestination="@+id/nav_profile">
 
 
     <fragment
@@ -17,6 +17,18 @@
         android:name="com.amtron.dronamma.fragment.BirthdayFragment"
         android:label="@string/menu_birthday"
         tools:layout="@layout/fragment_birthday" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.amtron.dronamma.fragment.Settings"
+        android:label="@string/menu_setting"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/nav_utility"
+        android:name="com.amtron.dronamma.fragment.Utility"
+        android:label="@string/menu_utility"
+        tools:layout="@layout/fragment_utility" />
 
     <fragment
         android:id="@+id/nav_add_inventory"

@@ -7,20 +7,32 @@
         android:id="@+id/group1"
         android:checkableBehavior="single">
 
-    <item
-        android:id="@+id/nav_profile"
-        android:icon="@drawable/baseline_person_24"
-        android:title="Profile" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/baseline_person_24"
+            android:title="Profile" />
 
         <item
             android:id="@+id/nav_add_inventory"
             android:icon="@drawable/baseline_inventory_24"
             android:title="Inventory" />
 
-    <item
-        android:id="@+id/nav_birthday"
-        android:icon="@drawable/baseline_cake_24"
-        android:title="Birthday" />
+        <item
+            android:id="@+id/nav_birthday"
+            android:icon="@drawable/baseline_cake_24"
+            android:title="Birthday" />
+
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/baseline_settings_24"
+            android:title="Settings" />
+
+
+        <item
+            android:id="@+id/nav_utility"
+            android:icon="@drawable/baseline_settings_system_daydream_24"
+            android:title="Utility" />
 
     </group>
 

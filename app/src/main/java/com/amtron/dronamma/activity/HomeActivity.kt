@@ -22,8 +22,8 @@ import com.amtron.dronamma.fragment.Attendance
 import com.amtron.dronamma.fragment.Payment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Logger
 
 class HomeActivity : AppCompatActivity() {
 
@@ -35,6 +35,8 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
 
 //        setSupportActionBar(binding.appBarMain.toolbar)
 
@@ -50,7 +52,7 @@ class HomeActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_profile, R.id.nav_add_inventory, R.id.nav_birthday
+                R.id.nav_profile, R.id.nav_add_inventory, R.id.nav_birthday,R.id.nav_settings,R.id.nav_utility
             ), drawerLayout
         )
 
@@ -60,18 +62,33 @@ class HomeActivity : AppCompatActivity() {
 
 
 
+
+
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // Check if the destination fragment is the one you want to target
 
-            if (destination.id == R.id.nav_profile) {
-                // Run your specific function here
-                bottomCloseNavOpen()
-            }
+//            if (destination.id == R.id.nav_profile) {
+//                // Run your specific function here
+//                bottomCloseNavOpen()
+//            }
+//
+//            if (destination.id == R.id.nav_settings) {
+//                // Run your specific function here
+//                bottomCloseNavOpen()
+//            }
+//
+//            if (destination.id == R.id.nav_add_inventory) {
+//                // Run your specific function here
+//                bottomCloseNavOpen()
+//            }
+//
+//            if (destination.id == R.id.nav_birthday) {
+//                // Run your specific function here
+//                bottomCloseNavOpen()
+//            }
 
-            if (destination.id == R.id.nav_birthday) {
-                // Run your specific function here
-                bottomCloseNavOpen()
-            }
+            bottomCloseNavOpen()
         }
 
 
