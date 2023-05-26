@@ -11,12 +11,12 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.amtron.dronamma.R
 import com.amtron.dronamma.databinding.FragmentAddStudentBinding
-import com.amtron.dronamma.databinding.FragmentSettingsBinding
+import com.amtron.dronamma.model.Attendance
 import com.amtron.dronamma.model.BatchClassModel
 import com.amtron.dronamma.model.Student
 import com.amtron.dronamma.model.User
+import com.amtron.dronamma.model.Payment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.Calendar
+import kotlin.properties.Delegates
 
 
 class AddStudent : Fragment() {
@@ -37,6 +38,7 @@ class AddStudent : Fragment() {
 
     private var advance = 0.0
     private var fees = 0.0
+    private var actualFees = 0.0
     private var month = 0
 
     private lateinit var birthDate: String
@@ -46,8 +48,15 @@ class AddStudent : Fragment() {
     private lateinit var batch: String
     private lateinit var branch: String
 
+    private lateinit var paymentRef: DatabaseReference
     private lateinit var studentRef: DatabaseReference
     private lateinit var batchClassRef: DatabaseReference
+    private lateinit var attendanceRef: DatabaseReference
+
+
+    private lateinit var currentDate: String
+
+    private var isAdvance by Delegates.notNull<Int>()
 
 
     private lateinit var batchNameList: ArrayList<String>
@@ -72,13 +81,35 @@ class AddStudent : Fragment() {
             sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
         )
 
-
+        paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
         studentRef = FirebaseDatabase.getInstance().getReference("Students")
         batchClassRef = FirebaseDatabase.getInstance().getReference("BatchClass")
+        attendanceRef = FirebaseDatabase.getInstance().getReference("Attendance")
+
+        isAdvance=0
 
 
 
+        val cal = Calendar.getInstance()
 
+        val myYear = cal.get(Calendar.YEAR)
+        val myMonth = cal.get(Calendar.MONTH)
+        val day = cal.get(Calendar.DAY_OF_MONTH)
+
+
+        val setDate: String = if (day < 10) {
+            "0$day"
+        } else {
+            "$day"
+        }
+
+        val setMonth: String = if (myMonth + 1 < 10) {
+            "0${myMonth + 1}"
+        } else {
+            "${myMonth + 1}"
+        }
+
+        currentDate = "$myYear-$setMonth-$setDate"
 
 
         className = ""
@@ -191,11 +222,14 @@ class AddStudent : Fragment() {
                 val studentId = studentRef.push().key!!
 
 
-                fees = "${binding.feesAmount.text}".toDouble()
+                actualFees = "${binding.feesAmount.text}".toDouble()
+
+
+                fees = actualFees
 
 
                 if (month > 0) {
-
+                    isAdvance = 1
                     advance = fees
                     fees /= month
                     advance -= fees
@@ -214,30 +248,61 @@ class AddStudent : Fragment() {
                     batch,
                     birthDate,
                     branch,
-                    1,
+                    isAdvance,
                     fees,
                     advance
                 )
 
 
                 studentRef.child(studentId).setValue(student).addOnCompleteListener {
-                    Toast.makeText(
-                        requireContext(), "Data inserted successfully", Toast.LENGTH_SHORT
-                    ).show()
 
 
-//                    dbRef = FirebaseDatabase.getInstance().getReference("Payments")
-//                    val paymentId = dbRef.push().key!!
-//
-//
-//                    val payment = Payment(paymentId,studentId,"${binding.studentName.text}",fees+advance,"${myMonth + 1}-$myYear",1)
-//
-//                    dbRef.child(paymentId).setValue(payment).addOnCompleteListener {
-////                        finish()
-//                    }.addOnFailureListener {
-//                        Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
-//                    }
+                    val attendanceId = attendanceRef.push().key!!
 
+                    val attendance = Attendance(
+                        attendanceId,
+                        student.name,
+                        student.className,
+                        student.id,
+                        student.batch,
+                        student.branch,
+                        currentDate,
+                        1
+                    )
+
+                    // Add Attendance list for current date
+                    attendanceRef.child(attendanceId).setValue(attendance).addOnCompleteListener {
+
+
+                        // Add Payment for current date
+
+                        val paymentId = paymentRef.push().key!!
+
+                        val payment = Payment(
+                            paymentId,
+                            studentId,
+                            "${binding.studentName.text}",
+                            actualFees,
+                            "$setMonth-$myYear",
+                            1,
+                            branch
+                        )
+
+                        paymentRef.child(paymentId).setValue(payment).addOnCompleteListener {
+
+
+                            Toast.makeText(
+                                requireContext(), "Data inserted successfully", Toast.LENGTH_SHORT
+                            ).show()
+
+                        }.addOnFailureListener {
+                            Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+
+                    }.addOnFailureListener {
+                        Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
+                    }
 
                 }.addOnFailureListener {
                     Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()

@@ -28,6 +28,7 @@ class Settings : Fragment(), BatchAndClassAdapter.ItemClickInterface {
     private lateinit var binding: FragmentSettingsBinding
     private lateinit var dbref: DatabaseReference
     private lateinit var branch: String
+    lateinit var user: User
 
     private lateinit var batchName: ArrayList<BatchClassModel>
     private lateinit var className: ArrayList<BatchClassModel>
@@ -42,7 +43,7 @@ class Settings : Fragment(), BatchAndClassAdapter.ItemClickInterface {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
-    lateinit var user: User
+
 
 
     override fun onCreateView(

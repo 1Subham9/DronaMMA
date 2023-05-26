@@ -14,13 +14,11 @@ import com.amtron.dronamma.model.BatchClassModel
 class AttendanceAdapter(private val itemClickInterface: ItemClickInterface) :
     RecyclerView.Adapter<AttendanceAdapter.ViewHolder>() {
 
-
     private val allData = ArrayList<Attendance>()
-
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val studentName: TextView = itemView.findViewById<TextView>(R.id.attendanceName)
+        val studentName = itemView.findViewById<TextView>(R.id.attendanceName)
         val className = itemView.findViewById<TextView>(R.id.attendanceClass)
         val batchName = itemView.findViewById<TextView>(R.id.attendanceBatch)
         val checkDetails = itemView.findViewById<TextView>(R.id.attendanceCheckDetails)
@@ -54,9 +52,9 @@ class AttendanceAdapter(private val itemClickInterface: ItemClickInterface) :
         holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
             // Do something when the checkbox state changes
             if (isChecked) {
-                itemClickInterface.setCheckBoxTrue(allData[position].id.toString())
+                itemClickInterface.setCheckBoxTrue(allData[position])
             } else {
-                itemClickInterface.setCheckBoxFalse(allData[position].id.toString())
+                itemClickInterface.setCheckBoxFalse(allData[position])
             }
         }
 
@@ -73,7 +71,7 @@ class AttendanceAdapter(private val itemClickInterface: ItemClickInterface) :
 
     interface ItemClickInterface {
         fun onCheckDetails(id: String)
-        fun setCheckBoxTrue(id: String)
-        fun setCheckBoxFalse(id: String)
+        fun setCheckBoxTrue(attendance: Attendance)
+        fun setCheckBoxFalse(attendance: Attendance)
     }
 }

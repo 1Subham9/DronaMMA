@@ -85,9 +85,7 @@ class Utility : Fragment() {
                             studentList.add(studentData)
 
                         }
-
                     }
-
                 }
             }
 
@@ -95,11 +93,6 @@ class Utility : Fragment() {
                 Toast.makeText(requireActivity(), "$error", Toast.LENGTH_SHORT).show()
             }
         })
-
-
-
-
-
 
 
         binding.addStudentForTodayAttendance.setOnClickListener {
@@ -129,22 +122,23 @@ class Utility : Fragment() {
                     )
 
                     attendanceRef.child(attendanceId).setValue(attendance).addOnCompleteListener {
-//                        Toast.makeText(
-//                            requireContext(), "Data inserted successfully", Toast.LENGTH_SHORT
-//                        ).show()
+
+                        // Add Attendance list for current date
+
+                        Toast.makeText(
+                            requireActivity(),
+                            "Attendance added for today's date",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
                     }.addOnFailureListener {
                         Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
                     }
 
 
-                    // Add Attendance list for current date
 
-                    Toast.makeText(
-                        requireActivity(),
-                        "Attendance added for today's date",
-                        Toast.LENGTH_SHORT
-                    ).show()
+
+
                 }
             } else {
                 Toast.makeText(

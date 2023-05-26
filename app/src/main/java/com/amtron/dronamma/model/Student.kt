@@ -10,7 +10,7 @@ data class Student(
     val batch: String?=null,
     val birthday: String?=null,
     val branch: String?=null,
-    val active: Int?=null,
-    val fees : Double?=null,
-    var advance : Double?=null
+    val paid: Int?=null,
+    var fees : Double?=null,
+    var advance : Double?=null,
 )

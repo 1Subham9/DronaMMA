@@ -30,7 +30,6 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
     private lateinit var attendanceRef: DatabaseReference
     private lateinit var attendanceList: ArrayList<Attendance>
     private lateinit var attendanceListDated: ArrayList<Attendance>
-    private lateinit var currentDate: String
     private lateinit var attendanceAdapter: AttendanceAdapter
     private lateinit var selectDate: String
 
@@ -43,13 +42,7 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
 
         attendanceRef = FirebaseDatabase.getInstance().getReference("Attendance")
 
-
         resumeFunction()
-
-
-        attendanceList = arrayListOf()
-        attendanceListDated = arrayListOf()
-
 
         // populating adapter
         binding.attendanceRecycler.layoutManager = LinearLayoutManager(requireActivity())
@@ -80,7 +73,21 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
             "${myMonth + 1}"
         }
 
-        currentDate = "$myYear-$setMonth-$setDate"
+        selectDate = "$myYear-$setMonth-$setDate"
+
+
+
+
+
+
+
+
+        return binding.root
+    }
+
+
+    override fun onResume() {
+        super.onResume()
 
 
         // Get Data from firebase
@@ -88,6 +95,9 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 if (snapshot.exists()) {
+
+                    attendanceList = arrayListOf()
+                    attendanceListDated = arrayListOf()
 
                     for (emSnap in snapshot.children) {
                         val attendanceData = emSnap.getValue(Attendance::class.java)
@@ -99,7 +109,7 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
 
 
                     for (attendance: Attendance in attendanceList) {
-                        if (attendance.date == currentDate) {
+                        if (attendance.date == selectDate) {
                             attendanceListDated.add(attendance)
                         }
                     }
@@ -112,25 +122,37 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
                 Toast.makeText(requireActivity(), "$error", Toast.LENGTH_SHORT).show()
             }
         })
-
-
-
-
-
-
-        return binding.root
     }
 
     override fun onCheckDetails(id: String) {
         Toast.makeText(requireContext(), "Check Details Typed", Toast.LENGTH_SHORT).show()
     }
 
-    override fun setCheckBoxTrue(id: String) {
-        Toast.makeText(requireContext(), "Set Check Box True", Toast.LENGTH_SHORT).show()
+    override fun setCheckBoxTrue(attendance: Attendance) {
+
+        attendance.present = 1
+
+        attendanceRef.child(attendance.id.toString()).setValue(attendance).addOnCompleteListener {
+            Toast.makeText(
+                requireContext(), "${attendance.name} is set to Present", Toast.LENGTH_SHORT
+            ).show()
+
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    override fun setCheckBoxFalse(id: String) {
-        Toast.makeText(requireContext(), "Set Check Box False", Toast.LENGTH_SHORT).show()
+    override fun setCheckBoxFalse(attendance: Attendance) {
+        attendance.present = 0
+
+        attendanceRef.child(attendance.id.toString()).setValue(attendance).addOnCompleteListener {
+            Toast.makeText(
+                requireContext(), "${attendance.name} is set to Absent", Toast.LENGTH_SHORT
+            ).show()
+
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun resumeFunction() {
