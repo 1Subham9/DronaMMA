@@ -40,6 +40,9 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     private lateinit var paymentList: ArrayList<Payment>
     private lateinit var paymentListNew: ArrayList<Payment>
     private lateinit var advanceList: ArrayList<Student>
+    private lateinit var advanceListNew: ArrayList<Student>
+
+    private lateinit var screen : String
 
     private lateinit var paymentRef: DatabaseReference
     private lateinit var studentRef: DatabaseReference
@@ -50,6 +53,8 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
     private lateinit var yearValue: ArrayList<String>
     private lateinit var monthValue: ArrayList<String>
+
+    private lateinit var date : String
 
     private lateinit var month: String
     private lateinit var year: String
@@ -73,6 +78,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
         )
 
+        screen="regular"
 
         paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
         studentRef = FirebaseDatabase.getInstance().getReference("Students")
@@ -84,6 +90,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
         paymentList = arrayListOf()
         advanceList = arrayListOf()
+        advanceListNew = arrayListOf()
         paymentListNew = arrayListOf()
         monthValue = arrayListOf()
         yearValue = arrayListOf()
@@ -99,7 +106,8 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             "${myMonth + 1}"
         }
 
-        val currentMonth = "$setMonth-$myYear"
+        date = "$setMonth-$myYear"
+
 
 
 
@@ -122,12 +130,28 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     }
                 }
 
+                advanceListNew.clear()
+
+
+                for(student : Student in advanceList){
+                    val list: String? = student.name?.lowercase()?.replace(" ", "")
+                    val input: String = s.toString().lowercase().replace(" ", "")
+
+                    if (input.let { list?.contains(it) } == true) {
+                        advanceListNew.add(student)
+                    }
+                }
+
+
+
+
             }
 
             override fun afterTextChanged(s: Editable?) {
 
                 // We we add something later
                 paymentRecycler.updateList(paymentListNew)
+                advanceRecycler.updateList(advanceListNew)
                 binding.paid.isChecked = false
                 binding.unPaid.isChecked = false
             }
@@ -164,18 +188,22 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
 
                     for (payment: Payment in paymentList) {
-                        if (payment.date == currentMonth) {
+                        if (payment.date == date) {
                             paymentListNew.add(payment)
                         }
                     }
 
-                    if (paymentListNew.isNotEmpty()) {
-                        paymentRecycler.updateList(paymentListNew)
-                        binding.selectDateLayout.visibility = View.VISIBLE
-                        binding.noDataAvailable.visibility = View.GONE
-                    } else {
-                        binding.noDataAvailable.visibility = View.VISIBLE
-                        binding.selectDateLayout.visibility = View.GONE
+                    paymentRecycler.updateList(paymentListNew)
+
+
+                    if(screen=="regular"){
+                        if (paymentListNew.isNotEmpty()) {
+                            binding.selectDateLayout.visibility = View.VISIBLE
+                            binding.noDataAvailable.visibility = View.GONE
+                        } else {
+                            binding.noDataAvailable.visibility = View.VISIBLE
+                            binding.selectDateLayout.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -204,14 +232,19 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                         }
                     }
 
-                    if (advanceList.isNotEmpty()) {
-                        advanceRecycler.updateList(advanceList)
-                        binding.advanceRecycler.visibility = View.VISIBLE
-                        binding.advanceComplete.visibility = View.GONE
-                    } else {
-                        binding.advanceRecycler.visibility = View.GONE
-                        binding.advanceComplete.visibility = View.VISIBLE
+                    advanceRecycler.updateList(advanceList)
+
+                    if(screen=="advance"){
+                        if (advanceList.isNotEmpty()) {
+                            binding.advanceRecycler.visibility = View.VISIBLE
+                            binding.advanceComplete.visibility = View.GONE
+                        } else {
+                            binding.advanceRecycler.visibility = View.GONE
+                            binding.advanceComplete.visibility = View.VISIBLE
+                        }
                     }
+
+
 
                 }
             }
@@ -226,14 +259,16 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             when (checkedId) {
                 R.id.regular -> {
                     // Option 1 is selected
+                    screen = "regular"
                     binding.advanceRecycler.visibility = View.GONE
                     binding.advanceComplete.visibility = View.GONE
+                    binding.selectDateLayout.visibility = View.VISIBLE
 
-                    if (paymentList.isNotEmpty()) {
-                        binding.selectDateLayout.visibility = View.VISIBLE
+                    if (paymentListNew.isNotEmpty()) {
+                        binding.paymentRecycler.visibility = View.VISIBLE
                         binding.noDataAvailable.visibility = View.GONE
                     } else {
-                        binding.selectDateLayout.visibility = View.GONE
+                        binding.paymentRecycler.visibility = View.GONE
                         binding.noDataAvailable.visibility = View.VISIBLE
                     }
 
@@ -241,6 +276,9 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
                 R.id.advance -> {
                     // Option 2 is selected
+
+                    screen = "advance"
+
                     binding.selectDateLayout.visibility = View.GONE
                     binding.noDataAvailable.visibility = View.GONE
 
@@ -269,17 +307,17 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     paymentListNew.clear()
 
                     for (payment: Payment in paymentList) {
-                        if (payment.payment == 1) {
+                        if (payment.payment == 1  && payment.date==date) {
                             paymentListNew.add(payment)
                         }
                     }
 
                     if (paymentListNew.isNotEmpty()) {
                         paymentRecycler.updateList(paymentListNew)
-                        binding.selectDateLayout.visibility = View.VISIBLE
+                        binding.paymentRecycler.visibility = View.VISIBLE
                         binding.noDataAvailable.visibility = View.GONE
                     } else {
-                        binding.selectDateLayout.visibility = View.GONE
+                        binding.paymentRecycler.visibility = View.GONE
                         binding.noDataAvailable.visibility = View.VISIBLE
                     }
 
@@ -296,27 +334,23 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     paymentListNew.clear()
 
                     for (payment: Payment in paymentList) {
-                        if (payment.payment == 0) {
+                        if (payment.payment == 0 && payment.date==date) {
                             paymentListNew.add(payment)
                         }
                     }
 
                     if (paymentListNew.isNotEmpty()) {
                         paymentRecycler.updateList(paymentListNew)
-                        binding.selectDateLayout.visibility = View.VISIBLE
+                        binding.paymentRecycler.visibility = View.VISIBLE
                         binding.noDataAvailable.visibility = View.GONE
                     } else {
-                        binding.selectDateLayout.visibility = View.GONE
+                        binding.paymentRecycler.visibility = View.GONE
                         binding.noDataAvailable.visibility = View.VISIBLE
                     }
                 }
 
             }
         }
-
-
-        binding.advanceRecycler.visibility = View.GONE
-        binding.advanceComplete.visibility = View.GONE
 
         return binding.root
     }
@@ -408,7 +442,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                 "${position + 1}"
             }
 
-            val date = "$month-$year"
+            date = "$month-$year"
 
             paymentListNew.clear()
 
@@ -457,7 +491,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             binding.advanceRecycler.visibility = View.GONE
             binding.advanceComplete.visibility = View.GONE
 
-            val date = "$month-$year"
+         date = "$month-$year"
 
             paymentListNew.clear()
 
