@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,17 +35,24 @@ import java.util.Calendar
 
 class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.ItemClickInterface {
 
-
     private lateinit var binding: FragmentPaymentBinding
+
     private lateinit var paymentList: ArrayList<Payment>
     private lateinit var paymentListNew: ArrayList<Payment>
     private lateinit var advanceList: ArrayList<Student>
+
     private lateinit var paymentRef: DatabaseReference
     private lateinit var studentRef: DatabaseReference
+
     private lateinit var paymentRecycler: PaymentAdapter
     private lateinit var advanceRecycler: AdvanceAdapter
     private lateinit var student: Student
 
+    private lateinit var yearValue: ArrayList<String>
+    private lateinit var monthValue: ArrayList<String>
+
+    private lateinit var month: String
+    private lateinit var year: String
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
@@ -77,7 +85,13 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         paymentList = arrayListOf()
         advanceList = arrayListOf()
         paymentListNew = arrayListOf()
+        monthValue = arrayListOf()
+        yearValue = arrayListOf()
+        month = ""
+        year = ""
 
+        setMonthSpinner()
+        setYearSpinner()
 
         val setMonth: String = if (myMonth + 1 < 10) {
             "0${myMonth + 1}"
@@ -121,8 +135,6 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         })
 
 
-
-
         // populating payment adapter
         binding.paymentRecycler.layoutManager = LinearLayoutManager(requireActivity())
         paymentRecycler = PaymentAdapter(this)
@@ -151,8 +163,8 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     }
 
 
-                    for(payment : Payment in paymentList){
-                        if( payment.date == currentMonth){
+                    for (payment: Payment in paymentList) {
+                        if (payment.date == currentMonth) {
                             paymentListNew.add(payment)
                         }
                     }
@@ -272,7 +284,6 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     }
 
 
-
                 }
 
                 R.id.unPaid -> {
@@ -363,6 +374,111 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     }
 
 
+    private fun setMonthSpinner() {
+
+        monthValue.add("JAN")
+        monthValue.add("FEB")
+        monthValue.add("MAR")
+        monthValue.add("APR")
+        monthValue.add("MAY")
+        monthValue.add("JUN")
+        monthValue.add("JUL")
+        monthValue.add("AUG")
+        monthValue.add("SEP")
+        monthValue.add("OCT")
+        monthValue.add("NOV")
+        monthValue.add("DEC")
+
+
+        val monthAdapter = ArrayAdapter(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item, monthValue
+        )
+
+        binding.spinnerMonth.setAdapter(monthAdapter)
+
+        binding.spinnerMonth.setOnItemClickListener { parent, view, position, id ->
+
+
+            binding.advanceRecycler.visibility = View.GONE
+            binding.advanceComplete.visibility = View.GONE
+
+            month = if (position + 1 < 10) {
+                "0${position + 1}"
+            } else {
+                "${position + 1}"
+            }
+
+            val date = "$month-$year"
+
+            paymentListNew.clear()
+
+
+            for (payment: Payment in paymentList) {
+                if (payment.date == date) {
+                    paymentListNew.add(payment)
+                }
+            }
+
+            if (paymentListNew.isNotEmpty()) {
+                paymentRecycler.updateList(paymentListNew)
+                binding.paymentRecycler.visibility = View.VISIBLE
+                binding.noDataAvailable.visibility = View.GONE
+            } else {
+                binding.noDataAvailable.visibility = View.VISIBLE
+                binding.paymentRecycler.visibility = View.GONE
+            }
+
+        }
+
+
+    }
+
+    private fun setYearSpinner() {
+
+        val cal = Calendar.getInstance()
+
+        val myYear = cal.get(Calendar.YEAR)
+
+        for (i in 2021..myYear) {
+            yearValue.add(i.toString())
+        }
+
+
+        val yearAdapter = ArrayAdapter(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item, yearValue
+        )
+
+        binding.spinnerYear.setAdapter(yearAdapter)
+
+        binding.spinnerYear.setOnItemClickListener { parent, view, position, id ->
+
+            year = yearValue[position]
+
+            binding.advanceRecycler.visibility = View.GONE
+            binding.advanceComplete.visibility = View.GONE
+
+            val date = "$month-$year"
+
+            paymentListNew.clear()
+
+            for (payment: Payment in paymentList) {
+                if (payment.date == date) {
+                    paymentListNew.add(payment)
+                }
+            }
+
+            if (paymentListNew.isNotEmpty()) {
+                paymentRecycler.updateList(paymentListNew)
+                binding.paymentRecycler.visibility = View.VISIBLE
+                binding.noDataAvailable.visibility = View.GONE
+            } else {
+                binding.noDataAvailable.visibility = View.VISIBLE
+                binding.paymentRecycler.visibility = View.GONE
+            }
+
+        }
+
+    }
 
 
 }
