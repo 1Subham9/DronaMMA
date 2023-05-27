@@ -1,7 +1,11 @@
 package com.amtron.dronamma.fragment
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -33,9 +37,13 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 import java.util.Calendar
 
+
 class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.ItemClickInterface {
 
     private lateinit var binding: FragmentPaymentBinding
+
+    private lateinit var packageManager : PackageManager
+
 
     private lateinit var paymentList: ArrayList<Payment>
     private lateinit var paymentListNew: ArrayList<Payment>
@@ -68,6 +76,8 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentPaymentBinding.inflate(inflater, container, false)
+
+        packageManager = requireContext().packageManager
 
 
         sharedPreferences =
@@ -371,8 +381,13 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                 student = dataSnapshot.getValue(Student::class.java)!!
 
 
-                Log.d(TAG, "Student: ${student.mobile}")
 
+
+
+                var phoneNumber = "${student.mobile}" // Replace with the recipient's phone number
+                val message = "Hello,${student.name}  please complete your payment" // Replace with the message content
+
+                sendWhatsAppMessage(phoneNumber, message)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -491,7 +506,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             binding.advanceRecycler.visibility = View.GONE
             binding.advanceComplete.visibility = View.GONE
 
-         date = "$month-$year"
+                date = "$month-$year"
 
             paymentListNew.clear()
 
@@ -514,5 +529,21 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
     }
 
+    fun sendWhatsAppMessage(toNumber: String, message: String) {
+        val intent = Intent(Intent.ACTION_SEND)
+//        intent.putExtra(Intent.EXTRA_TEXT, message)
+
+        intent.setPackage("com.whatsapp")
+
+        intent.type = "text/plain"
+
+        intent.putExtra("android.intent.extra.PHONE_NUMBER", toNumber)
+
+        // Set the message text
+        intent.putExtra("android.intent.extra.TEXT", message)
+
+        requireContext().startActivity(intent)
+
+    }
 
 }
