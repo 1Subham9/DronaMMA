@@ -125,6 +125,7 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
+
         if (monthYear.isEmpty() || currentMonth != monthYear) {
 
             editor.putString("monthYear", currentMonth)
@@ -142,10 +143,6 @@ class HomeActivity : AppCompatActivity() {
         }else{
             studentList.clear()
         }
-
-
-
-
 
 
                 actionBar = supportActionBar!!
@@ -319,7 +316,9 @@ class HomeActivity : AppCompatActivity() {
                         studentData.fees,
                         currentMonth,
                         0,
-                        branch
+                        branch,
+                        studentData.batch,
+                        studentData.className
                     )
 
                     paymentRef.child(paymentId).setValue(payment).addOnCompleteListener {

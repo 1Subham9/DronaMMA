@@ -86,8 +86,7 @@ class AddStudent : Fragment() {
         batchClassRef = FirebaseDatabase.getInstance().getReference("BatchClass")
         attendanceRef = FirebaseDatabase.getInstance().getReference("Attendance")
 
-        isAdvance=0
-
+        isAdvance = 0
 
 
         val cal = Calendar.getInstance()
@@ -273,7 +272,6 @@ class AddStudent : Fragment() {
                     // Add Attendance list for current date
                     attendanceRef.child(attendanceId).setValue(attendance).addOnCompleteListener {
 
-
                         // Add Payment for current date
 
                         val paymentId = paymentRef.push().key!!
@@ -285,7 +283,9 @@ class AddStudent : Fragment() {
                             actualFees,
                             "$setMonth-$myYear",
                             1,
-                            branch
+                            branch,
+                            batch,
+                            className
                         )
 
                         paymentRef.child(paymentId).setValue(payment).addOnCompleteListener {

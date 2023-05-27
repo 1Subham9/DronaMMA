@@ -7,5 +7,7 @@ data class Payment(
     val amount: Double? = null,
     val date: String? = null,
     var payment: Int? = null,
-    val branch: String? = null
+    val branch: String? = null,
+    val batch: String?=null,
+    val className: String? = null
 )

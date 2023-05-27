@@ -3,6 +3,8 @@ package com.amtron.dronamma.fragment
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,7 @@ import com.amtron.dronamma.databinding.FragmentAddStudentBinding
 import com.amtron.dronamma.databinding.FragmentAttendanceBinding
 import com.amtron.dronamma.model.Attendance
 import com.amtron.dronamma.model.BatchClassModel
+import com.amtron.dronamma.model.Payment
 import com.amtron.dronamma.model.Student
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -76,6 +79,37 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
         selectDate = "$myYear-$setMonth-$setDate"
 
 
+        binding.searchStudentName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // We we add something later
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                attendanceListDated.clear()
+
+                for (attendance: Attendance in attendanceList) {
+
+                    val list: String? = attendance.name?.lowercase()?.replace(" ", "")
+                    val input: String = s.toString().lowercase().replace(" ", "")
+
+                    if (input.let { list?.contains(it) } == true && attendance.date==selectDate) {
+                        attendanceListDated.add(attendance)
+                    }
+                }
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+                // We we add something later
+                attendanceAdapter.updateList(attendanceListDated)
+
+            }
+
+        })
+
+
 
 
 
@@ -133,9 +167,9 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
         attendance.present = 1
 
         attendanceRef.child(attendance.id.toString()).setValue(attendance).addOnCompleteListener {
-            Toast.makeText(
-                requireContext(), "${attendance.name} is set to Present", Toast.LENGTH_SHORT
-            ).show()
+//            Toast.makeText(
+//                requireContext(), "${attendance.name} is set to Present", Toast.LENGTH_SHORT
+//            ).show()
 
         }.addOnFailureListener {
             Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
@@ -146,9 +180,9 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
         attendance.present = 0
 
         attendanceRef.child(attendance.id.toString()).setValue(attendance).addOnCompleteListener {
-            Toast.makeText(
-                requireContext(), "${attendance.name} is set to Absent", Toast.LENGTH_SHORT
-            ).show()
+//            Toast.makeText(
+//                requireContext(), "${attendance.name} is set to Absent", Toast.LENGTH_SHORT
+//            ).show()
 
         }.addOnFailureListener {
             Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
