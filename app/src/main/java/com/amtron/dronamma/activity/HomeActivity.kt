@@ -81,6 +81,7 @@ class HomeActivity : AppCompatActivity() {
         paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
         studentRef = FirebaseDatabase.getInstance().getReference("Students")
 
+        studentList = arrayListOf()
 
 
 
@@ -124,16 +125,23 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
+        if (monthYear.isEmpty() || currentMonth != monthYear) {
 
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.IO) {
-                Thread.sleep(3000)
-                enterMonthlyData(monthYear, currentMonth)
+            editor.putString("monthYear", currentMonth)
+            editor.apply()
 
+
+            CoroutineScope(Dispatchers.IO).launch {
+                withContext(Dispatchers.IO) {
+                    Thread.sleep(3000)
+                    enterMonthlyData(monthYear, currentMonth)
+
+                }
             }
+
+        }else{
+            studentList.clear()
         }
-
-
 
 
 
