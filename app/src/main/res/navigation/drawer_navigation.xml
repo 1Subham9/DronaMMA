@@ -14,7 +14,7 @@
 
     <fragment
         android:id="@+id/nav_birthday"
-        android:name="com.amtron.dronamma.fragment.BirthdayFragment"
+        android:name="com.amtron.dronamma.fragment.Birthday"
         android:label="@string/menu_birthday"
         tools:layout="@layout/fragment_birthday" />
 

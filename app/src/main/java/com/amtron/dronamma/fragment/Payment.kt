@@ -42,7 +42,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
     private lateinit var binding: FragmentPaymentBinding
 
-    private lateinit var packageManager : PackageManager
+    private lateinit var packageManager: PackageManager
 
 
     private lateinit var paymentList: ArrayList<Payment>
@@ -50,7 +50,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     private lateinit var advanceList: ArrayList<Student>
     private lateinit var advanceListNew: ArrayList<Student>
 
-    private lateinit var screen : String
+    private lateinit var screen: String
 
     private lateinit var paymentRef: DatabaseReference
     private lateinit var studentRef: DatabaseReference
@@ -62,7 +62,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     private lateinit var yearValue: ArrayList<String>
     private lateinit var monthValue: ArrayList<String>
 
-    private lateinit var date : String
+    private lateinit var date: String
 
     private lateinit var month: String
     private lateinit var year: String
@@ -88,7 +88,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
         )
 
-        screen="regular"
+        screen = "regular"
 
         paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
         studentRef = FirebaseDatabase.getInstance().getReference("Students")
@@ -143,7 +143,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                 advanceListNew.clear()
 
 
-                for(student : Student in advanceList){
+                for (student: Student in advanceList) {
                     val list: String? = student.name?.lowercase()?.replace(" ", "")
                     val input: String = s.toString().lowercase().replace(" ", "")
 
@@ -151,8 +151,6 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                         advanceListNew.add(student)
                     }
                 }
-
-
 
 
             }
@@ -206,7 +204,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     paymentRecycler.updateList(paymentListNew)
 
 
-                    if(screen=="regular"){
+                    if (screen == "regular") {
                         if (paymentListNew.isNotEmpty()) {
                             binding.selectDateLayout.visibility = View.VISIBLE
                             binding.noDataAvailable.visibility = View.GONE
@@ -244,7 +242,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
                     advanceRecycler.updateList(advanceList)
 
-                    if(screen=="advance"){
+                    if (screen == "advance") {
                         if (advanceList.isNotEmpty()) {
                             binding.advanceRecycler.visibility = View.VISIBLE
                             binding.advanceComplete.visibility = View.GONE
@@ -253,7 +251,6 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                             binding.advanceComplete.visibility = View.VISIBLE
                         }
                     }
-
 
 
                 }
@@ -317,7 +314,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     paymentListNew.clear()
 
                     for (payment: Payment in paymentList) {
-                        if (payment.payment == 1  && payment.date==date) {
+                        if (payment.payment == 1 && payment.date == date) {
                             paymentListNew.add(payment)
                         }
                     }
@@ -344,7 +341,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     paymentListNew.clear()
 
                     for (payment: Payment in paymentList) {
-                        if (payment.payment == 0 && payment.date==date) {
+                        if (payment.payment == 0 && payment.date == date) {
                             paymentListNew.add(payment)
                         }
                     }
@@ -381,11 +378,9 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                 student = dataSnapshot.getValue(Student::class.java)!!
 
 
-
-
-
                 var phoneNumber = "${student.mobile}" // Replace with the recipient's phone number
-                val message = "Hello,${student.name}  please complete your payment" // Replace with the message content
+                val message =
+                    "Hello,${student.name}  please complete your payment" // Replace with the message content
 
                 sendWhatsAppMessage(phoneNumber, message)
             }
@@ -506,7 +501,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             binding.advanceRecycler.visibility = View.GONE
             binding.advanceComplete.visibility = View.GONE
 
-                date = "$month-$year"
+            date = "$month-$year"
 
             paymentListNew.clear()
 
@@ -542,7 +537,17 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         // Set the message text
         intent.putExtra("android.intent.extra.TEXT", message)
 
-        requireContext().startActivity(intent)
+
+        try {
+            requireContext().startActivity(intent)
+        } catch (ex: Exception) {
+            Toast.makeText(
+                requireContext(),
+                "WhatsApp not Installed in your mobile",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
 
     }
 
