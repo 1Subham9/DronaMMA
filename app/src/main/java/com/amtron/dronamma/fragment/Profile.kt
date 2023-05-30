@@ -53,6 +53,7 @@ class Profile : Fragment() {
         binding.logout.setOnClickListener {
 
             editor.remove("user")
+            editor.remove("date")
             editor.apply()
 
 

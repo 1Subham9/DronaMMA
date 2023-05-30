@@ -55,7 +55,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var studentRef: DatabaseReference
     private lateinit var dateRef: DatabaseReference
 
-    private var date: Date? = null
+    private  var date: Date?=null
     private var monthYear: String = ""
 
 
@@ -75,6 +75,12 @@ class HomeActivity : AppCompatActivity() {
         user = Gson().fromJson(
             sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
         )
+
+
+        date = Gson().fromJson(
+            sharedPreferences.getString("date", "").toString(), object : TypeToken<Date>() {}.type
+        )
+
 
         branch = user.branch.toString()
 
@@ -125,6 +131,9 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(this@HomeActivity, "$error", Toast.LENGTH_SHORT).show()
             }
         })
+
+
+        monthYear = date?.month.toString()
 
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -318,41 +327,36 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun addDataForNewMonth(currentMonth: String) {
+
         if (monthYear.isEmpty() || currentMonth != monthYear) {
 
 
-            if (date != null) {
-                val id = date!!.id
 
-                date!!.month = currentMonth
+            var id = date?.id
 
-                if (id != null) {
-                    dateRef.child(id).setValue(date).addOnSuccessListener {
 
-                        // Value successfully stored in the database
-                        Log.d("FirebaseDatabase", "Variable value stored for this month")
-                    }.addOnFailureListener { exception ->
-                        // Error occurred while storing the value
-                        Log.e("FirebaseDatabase", "Error storing value: $exception")
-                    }
-                }
 
-            } else {
-
-                val id = dateRef.push().key!!
-
-                date = Date(id, branch, "", currentMonth)
-
-                dateRef.child(id).setValue(date).addOnSuccessListener {
-
-                    // Value successfully stored in the database
-                    Log.d("FirebaseDatabase", "Variable value stored for this month")
-                }.addOnFailureListener { exception ->
-                    // Error occurred while storing the value
-                    Log.e("FirebaseDatabase", "Error storing value: $exception")
-                }
-
+            if (!id.isNullOrEmpty()) {
+                date?.month = currentMonth
+            }else{
+                id = dateRef.push().key!!
+                date = Date(id,branch,"",currentMonth)
             }
+
+
+            dateRef.child(id).setValue(date).addOnSuccessListener {
+
+                // Value successfully stored in the database
+                Log.d("FirebaseDatabase", "Variable value stored for this month")
+            }.addOnFailureListener { exception ->
+                // Error occurred while storing the value
+                Log.e("FirebaseDatabase", "Error storing value: $exception")
+            }
+
+
+
+            editor.putString("date", Gson().toJson(date))
+            editor.apply()
 
 
             enterMonthlyData(monthYear, currentMonth)
@@ -366,8 +370,7 @@ class HomeActivity : AppCompatActivity() {
     private fun enterMonthlyData(monthYear: String, currentMonth: String) {
         if (monthYear.isEmpty() || currentMonth != monthYear) {
 
-            editor.putString("monthYear", currentMonth)
-            editor.apply()
+
 
 
             for (studentData: Student in studentList) {

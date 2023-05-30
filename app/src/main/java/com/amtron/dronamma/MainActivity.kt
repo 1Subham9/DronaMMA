@@ -11,7 +11,9 @@ import com.amtron.dronamma.activity.HomeActivity
 import com.amtron.dronamma.activity.LoginActivity
 import com.amtron.dronamma.databinding.ActivityHomeBinding
 import com.amtron.dronamma.databinding.ActivityMainBinding
+import com.amtron.dronamma.model.Date
 import com.amtron.dronamma.service.ConnectionLiveData
+import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +37,14 @@ class MainActivity : AppCompatActivity() {
         editor = sharedPreferences.edit()
 
 
+
+
+//        editor.remove("user")
+//        editor.apply()
+
+
+
+
         val networkConnection = ConnectionLiveData(application)
 
         networkConnection.observe(this, Observer {
@@ -45,6 +55,8 @@ class MainActivity : AppCompatActivity() {
 
                 val user = sharedPreferences.getString("user", "").toString()
                 if (user.isEmpty()) {
+
+
                     val intent = Intent(this@MainActivity, LoginActivity::class.java)
                     startActivity(intent)
                     finish()
