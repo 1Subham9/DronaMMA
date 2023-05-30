@@ -2,6 +2,7 @@ package com.amtron.dronamma.fragment
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,11 +12,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.amtron.dronamma.databinding.FragmentUtilityBinding
 import com.amtron.dronamma.model.Student
 import com.amtron.dronamma.model.Attendance
+import com.amtron.dronamma.model.Date
+import com.amtron.dronamma.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.Calendar
 
 
@@ -26,6 +31,12 @@ class Utility : Fragment() {
 
     private lateinit var studentRef: DatabaseReference
     private lateinit var attendanceRef: DatabaseReference
+    private lateinit var dateRef: DatabaseReference
+    private lateinit var user : User
+    private lateinit var branch : String
+
+    private var storedDate : String = ""
+    private var date: Date? = null
 
     private lateinit var studentList: ArrayList<Student>
 
@@ -67,8 +78,16 @@ class Utility : Fragment() {
         editor = sharedPreferences.edit()
 
 
+        user = Gson().fromJson(
+            sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
+        )
+
+        branch = user.branch.toString()
+
+
         studentRef = FirebaseDatabase.getInstance().getReference("Students")
         attendanceRef = FirebaseDatabase.getInstance().getReference("Attendance")
+        dateRef = FirebaseDatabase.getInstance().getReference("Date")
 
 
         // populate student list
@@ -95,15 +114,53 @@ class Utility : Fragment() {
         })
 
 
+//         Retrieve the value from the database
+        dateRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (snapshot.exists()) {
+
+
+                    for (emSnap in snapshot.children) {
+                        val dateData = emSnap.getValue(Date::class.java)
+
+                        if (dateData != null && dateData.branch == branch) {
+
+                            date = dateData
+
+                            storedDate = date!!.date.toString()
+
+
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
         binding.addStudentForTodayAttendance.setOnClickListener {
 
 
-            val storedDate = sharedPreferences.getString("date", "").toString()
-
-
             if (storedDate.isEmpty() || storedDate != currentDate) {
-                editor.putString("date", currentDate)
-                editor.apply()
+
+                date!!.date= currentDate
+                val id = date!!.id
+
+                if (id != null) {
+                    dateRef.child(id).setValue(date).addOnSuccessListener {
+
+                        // Value successfully stored in the database
+                        Log.d("FirebaseDatabase", "Variable value stored for this month")
+                    }.addOnFailureListener { exception ->
+                        // Error occurred while storing the value
+                        Log.e("FirebaseDatabase", "Error storing value: $exception")
+                    }
+                }
+
 
 
                 for (student : Student in studentList) {

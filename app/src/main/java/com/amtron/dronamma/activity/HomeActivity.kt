@@ -2,6 +2,7 @@ package com.amtron.dronamma.activity
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -21,6 +22,7 @@ import com.amtron.dronamma.databinding.ActivityHomeBinding
 import com.amtron.dronamma.fragment.AddStudent
 import com.amtron.dronamma.fragment.Attendance
 import com.amtron.dronamma.fragment.Payment
+import com.amtron.dronamma.model.Date
 import com.amtron.dronamma.model.Student
 import com.amtron.dronamma.model.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -29,7 +31,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Logger
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -52,6 +53,10 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var paymentRef: DatabaseReference
     private lateinit var studentRef: DatabaseReference
+    private lateinit var dateRef: DatabaseReference
+
+    private var date: Date? = null
+    private var monthYear: String = ""
 
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -61,10 +66,6 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
-
-//        setSupportActionBar(binding.appBarMain.toolbar)
 
 
         sharedPreferences = this.getSharedPreferences("Drona", MODE_PRIVATE)
@@ -77,12 +78,11 @@ class HomeActivity : AppCompatActivity() {
 
         branch = user.branch.toString()
 
-
         paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
         studentRef = FirebaseDatabase.getInstance().getReference("Students")
+        dateRef = FirebaseDatabase.getInstance().getReference("Date")
 
         studentList = arrayListOf()
-
 
 
         val cal = Calendar.getInstance()
@@ -99,7 +99,44 @@ class HomeActivity : AppCompatActivity() {
 
         val currentMonth = "$setMonth-$myYear"
 
-        val monthYear = sharedPreferences.getString("monthYear", "").toString()
+
+        dateRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (snapshot.exists()) {
+
+
+                    for (emSnap in snapshot.children) {
+                        val dateData = emSnap.getValue(Date::class.java)
+
+                        if (dateData != null && dateData.branch == branch) {
+
+                            date = dateData
+
+                            monthYear = date!!.month.toString()
+
+
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@HomeActivity, "$error", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
+        CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.IO) {
+                Thread.sleep(3000)
+                addDataForNewMonth(currentMonth)
+
+            }
+        }
+
+
+
 
         studentRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -115,6 +152,7 @@ class HomeActivity : AppCompatActivity() {
 
                             studentList.add(studentData)
 
+
                         }
                     }
                 }
@@ -126,49 +164,33 @@ class HomeActivity : AppCompatActivity() {
         })
 
 
-        if (monthYear.isEmpty() || currentMonth != monthYear) {
-
-            editor.putString("monthYear", currentMonth)
-            editor.apply()
 
 
-            CoroutineScope(Dispatchers.IO).launch {
-                withContext(Dispatchers.IO) {
-                    Thread.sleep(3000)
-                    enterMonthlyData(monthYear, currentMonth)
 
-                }
-            }
+        actionBar = supportActionBar!!
 
-        }else{
-            studentList.clear()
-        }
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
 
 
-                actionBar = supportActionBar!!
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_profile,
+                R.id.nav_add_inventory,
+                R.id.nav_birthday,
+                R.id.nav_settings,
+                R.id.nav_utility
+            ), drawerLayout
+        )
 
-                val drawerLayout: DrawerLayout = binding.drawerLayout
-                val navView: NavigationView = binding.navView
-                val navController = findNavController(R.id.nav_host_fragment_content_main)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
 
-
-                // Passing each menu ID as a set of Ids because each
-                // menu should be considered as top level destinations.
-                appBarConfiguration = AppBarConfiguration(
-                    setOf(
-                        R.id.nav_profile,
-                        R.id.nav_add_inventory,
-                        R.id.nav_birthday,
-                        R.id.nav_settings,
-                        R.id.nav_utility
-                    ), drawerLayout
-                )
-
-                setupActionBarWithNavController(navController, appBarConfiguration)
-                navView.setupWithNavController(navController)
-
-                navController.addOnDestinationChangedListener { _, destination, _ ->
-                    // Check if the destination fragment is the one you want to target
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            // Check if the destination fragment is the one you want to target
 
 //            if (destination.id == R.id.nav_profile) {
 //                // Run your specific function here
@@ -190,110 +212,156 @@ class HomeActivity : AppCompatActivity() {
 //                bottomCloseNavOpen()
 //            }
 
-                    bottomCloseNavOpen()
+            bottomCloseNavOpen()
+        }
+
+
+        val fragmentList = arrayListOf<Fragment>(
+            Attendance(), AddStudent(), Payment()
+        )
+
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+
+
+        val adapter = ViewPagerAdapter(
+            fragmentList, this.supportFragmentManager, lifecycle
+        )
+
+        val viewPage = findViewById<ViewPager2>(R.id.viewPager)
+
+        viewPage.adapter = adapter
+
+        bottomNav.setOnItemSelectedListener {
+
+
+            when (it.itemId) {
+
+                R.id.attendance -> {
+                    viewPage.currentItem = 0
+                    navCloseBottomOpen()
+                    actionBar.title = "Drona"
+
                 }
 
+                R.id.addStudent -> {
+                    viewPage.currentItem = 1
+                    navCloseBottomOpen()
+                    actionBar.title = "Drona"
 
-                val fragmentList = arrayListOf<Fragment>(
-                    Attendance(), AddStudent(), Payment()
-                )
-
-                val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
-
-
-                val adapter = ViewPagerAdapter(
-                    fragmentList, this.supportFragmentManager, lifecycle
-                )
-
-                val viewPage = findViewById<ViewPager2>(R.id.viewPager)
-
-                viewPage.adapter = adapter
-
-                bottomNav.setOnItemSelectedListener {
-
-
-                    when (it.itemId) {
-
-                        R.id.attendance -> {
-                            viewPage.currentItem = 0
-                            navCloseBottomOpen()
-                            actionBar.title = "Drona"
-
-                        }
-
-                        R.id.addStudent -> {
-                            viewPage.currentItem = 1
-                            navCloseBottomOpen()
-                            actionBar.title = "Drona"
-
-                        }
-
-                        R.id.payment -> {
-                            viewPage.currentItem = 2
-                            navCloseBottomOpen()
-                            actionBar.title = "Drona"
-
-                        }
-                    }
-
-                    return@setOnItemSelectedListener true
                 }
 
+                R.id.payment -> {
+                    viewPage.currentItem = 2
+                    navCloseBottomOpen()
+                    actionBar.title = "Drona"
+
+                }
+            }
+
+            return@setOnItemSelectedListener true
+        }
 
 
-                viewPage.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                    override fun onPageSelected(position: Int) {
 
-                        when (position) {
+        viewPage.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
 
-                            0 -> {
-                                bottomNav.selectedItemId = R.id.attendance
-                            }
+                when (position) {
 
-                            1 -> {
-                                bottomNav.selectedItemId = R.id.addStudent
-                            }
-
-                            2 -> {
-                                bottomNav.selectedItemId = R.id.payment
-                            }
-
-                        }
-
-                        super.onPageSelected(position)
+                    0 -> {
+                        bottomNav.selectedItemId = R.id.attendance
                     }
 
-
-                })
-
-
-                val callback = object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-
-                        when (viewPage.currentItem) {
-                            2 -> {
-                                viewPage.currentItem = 1
-                            }
-
-                            1 -> {
-                                viewPage.currentItem = 0
-                            }
-
-                            else -> {
-                                finish()
-                            }
-                        }
-
+                    1 -> {
+                        bottomNav.selectedItemId = R.id.addStudent
                     }
+
+                    2 -> {
+                        bottomNav.selectedItemId = R.id.payment
+                    }
+
                 }
 
-                onBackPressedDispatcher.addCallback(callback)
+                super.onPageSelected(position)
+            }
 
-                navCloseBottomOpen()
-                actionBar.title = "Drona"
 
+        })
+
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+
+                when (viewPage.currentItem) {
+                    2 -> {
+                        viewPage.currentItem = 1
+                    }
+
+                    1 -> {
+                        viewPage.currentItem = 0
+                    }
+
+                    else -> {
+                        finish()
+                    }
+                }
 
             }
+        }
+
+        onBackPressedDispatcher.addCallback(callback)
+
+        navCloseBottomOpen()
+        actionBar.title = "Drona"
+
+
+    }
+
+    private fun addDataForNewMonth(currentMonth: String) {
+        if (monthYear.isEmpty() || currentMonth != monthYear) {
+
+
+            if (date != null) {
+                val id = date!!.id
+
+                date!!.month = currentMonth
+
+                if (id != null) {
+                    dateRef.child(id).setValue(date).addOnSuccessListener {
+
+                        // Value successfully stored in the database
+                        Log.d("FirebaseDatabase", "Variable value stored for this month")
+                    }.addOnFailureListener { exception ->
+                        // Error occurred while storing the value
+                        Log.e("FirebaseDatabase", "Error storing value: $exception")
+                    }
+                }
+
+            } else {
+
+                val id = dateRef.push().key!!
+
+                date = Date(id, branch, "", currentMonth)
+
+                dateRef.child(id).setValue(date).addOnSuccessListener {
+
+                    // Value successfully stored in the database
+                    Log.d("FirebaseDatabase", "Variable value stored for this month")
+                }.addOnFailureListener { exception ->
+                    // Error occurred while storing the value
+                    Log.e("FirebaseDatabase", "Error storing value: $exception")
+                }
+
+            }
+
+
+            enterMonthlyData(monthYear, currentMonth)
+
+
+        } else {
+            studentList.clear()
+        }
+    }
 
     private fun enterMonthlyData(monthYear: String, currentMonth: String) {
         if (monthYear.isEmpty() || currentMonth != monthYear) {
@@ -367,21 +435,21 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun bottomCloseNavOpen() {
-                findViewById<View>(R.id.app_bar_main).visibility = View.VISIBLE
-                findViewById<View>(R.id.bottom_nav_view).visibility = View.GONE
-            }
+        findViewById<View>(R.id.app_bar_main).visibility = View.VISIBLE
+        findViewById<View>(R.id.bottom_nav_view).visibility = View.GONE
+    }
 
-            private fun navCloseBottomOpen() {
-                findViewById<View>(R.id.app_bar_main).visibility = View.GONE
-                findViewById<View>(R.id.bottom_nav_view).visibility = View.VISIBLE
-            }
+    private fun navCloseBottomOpen() {
+        findViewById<View>(R.id.app_bar_main).visibility = View.GONE
+        findViewById<View>(R.id.bottom_nav_view).visibility = View.VISIBLE
+    }
 
 
-            override fun onSupportNavigateUp(): Boolean {
-                val navController = findNavController(R.id.nav_host_fragment_content_main)
-                return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-            }
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
 
-        }
+}
 
 
