@@ -52,6 +52,9 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
         attendanceAdapter = AttendanceAdapter(this)
         binding.attendanceRecycler.adapter = attendanceAdapter
 
+        attendanceList = arrayListOf()
+        attendanceListDated = arrayListOf()
+
 
         // Current Date
 
@@ -119,8 +122,8 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
                     binding.attendanceRecycler.visibility = View.GONE
                     binding.noStudent.visibility=View.GONE
 
-                    attendanceList = arrayListOf()
-                    attendanceListDated = arrayListOf()
+                    attendanceList.clear()
+                    attendanceListDated.clear()
 
                     for (emSnap in snapshot.children) {
                         val attendanceData = emSnap.getValue(Attendance::class.java)
