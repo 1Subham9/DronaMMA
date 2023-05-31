@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.Attendance">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/logo"
-        android:alpha="0.051"/>
+        android:alpha="0.051"
+        android:background="@drawable/logo" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,25 +39,66 @@
 
         <TextView
             android:id="@+id/selectDate"
-            android:drawableLeft="@drawable/baseline_calendar_month_24"
             android:layout_width="match_parent"
-            android:drawablePadding="10dp"
             android:layout_height="48dp"
-            android:gravity="center_vertical"
             android:layout_margin="10dp"
+            android:drawableLeft="@drawable/baseline_calendar_month_24"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
             android:text="Select Data"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/attendanceRecycler"
-            android:layout_margin="10dp"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loading"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading" />
 
+
+        <LinearLayout
+            android:id="@+id/noStudent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/no_data" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:fontFamily="@font/roboto_bold"
+                android:text="No Student is Available for the Selected Date"
+                android:textSize="20sp" />
+
+
+        </LinearLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/attendanceRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:visibility="gone" />
 
 
     </LinearLayout>

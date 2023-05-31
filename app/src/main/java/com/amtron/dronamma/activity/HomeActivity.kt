@@ -2,7 +2,6 @@ package com.amtron.dronamma.activity
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -21,8 +20,8 @@ import com.amtron.dronamma.adapter.ViewPagerAdapter
 import com.amtron.dronamma.databinding.ActivityHomeBinding
 import com.amtron.dronamma.fragment.AddStudent
 import com.amtron.dronamma.fragment.Attendance
-import com.amtron.dronamma.fragment.Payment
 import com.amtron.dronamma.model.Date
+import com.amtron.dronamma.model.Payment
 import com.amtron.dronamma.model.Student
 import com.amtron.dronamma.model.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -55,8 +54,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var studentRef: DatabaseReference
     private lateinit var dateRef: DatabaseReference
 
-    private  var date: Date?=null
-    private var monthYear: String = ""
+    private var flag: Boolean = true
 
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -77,11 +75,6 @@ class HomeActivity : AppCompatActivity() {
         )
 
 
-        date = Gson().fromJson(
-            sharedPreferences.getString("date", "").toString(), object : TypeToken<Date>() {}.type
-        )
-
-
         branch = user.branch.toString()
 
         paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
@@ -90,9 +83,7 @@ class HomeActivity : AppCompatActivity() {
 
         studentList = arrayListOf()
 
-
         val cal = Calendar.getInstance()
-
         val myYear = cal.get(Calendar.YEAR)
         val myMonth = cal.get(Calendar.MONTH)
 
@@ -106,47 +97,6 @@ class HomeActivity : AppCompatActivity() {
         val currentMonth = "$setMonth-$myYear"
 
 
-        dateRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                if (snapshot.exists()) {
-
-
-                    for (emSnap in snapshot.children) {
-                        val dateData = emSnap.getValue(Date::class.java)
-
-                        if (dateData != null && dateData.branch == branch) {
-
-                            date = dateData
-
-                            monthYear = date!!.month.toString()
-
-
-                        }
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@HomeActivity, "$error", Toast.LENGTH_SHORT).show()
-            }
-        })
-
-
-        monthYear = date?.month.toString()
-
-
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.IO) {
-                Thread.sleep(3000)
-                addDataForNewMonth(currentMonth)
-
-            }
-        }
-
-
-
-
         studentRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
@@ -158,10 +108,7 @@ class HomeActivity : AppCompatActivity() {
                         val studentData = emSnap.getValue(Student::class.java)
 
                         if (studentData != null) {
-
                             studentList.add(studentData)
-
-
                         }
                     }
                 }
@@ -173,7 +120,37 @@ class HomeActivity : AppCompatActivity() {
         })
 
 
+        paymentRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
 
+                if (snapshot.exists()) {
+
+                    for (emSnap in snapshot.children) {
+                        val paymentData = emSnap.getValue(Payment::class.java)
+
+                        if (paymentData != null && paymentData.date.toString() == currentMonth) {
+                            flag = false
+                            break
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@HomeActivity, "$error", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
+        CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.IO) {
+                Thread.sleep(3000)
+                if (flag) {
+                    enterMonthlyData( currentMonth)
+                }
+
+            }
+        }
 
 
         actionBar = supportActionBar!!
@@ -226,7 +203,7 @@ class HomeActivity : AppCompatActivity() {
 
 
         val fragmentList = arrayListOf<Fragment>(
-            Attendance(), AddStudent(), Payment()
+            Attendance(), AddStudent(), com.amtron.dronamma.fragment.Payment()
         )
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
@@ -326,51 +303,7 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    private fun addDataForNewMonth(currentMonth: String) {
-
-        if (monthYear.isEmpty() || currentMonth != monthYear) {
-
-
-
-            var id = date?.id
-
-
-
-            if (!id.isNullOrEmpty()) {
-                date?.month = currentMonth
-            }else{
-                id = dateRef.push().key!!
-                date = Date(id,branch,"",currentMonth)
-            }
-
-
-            dateRef.child(id).setValue(date).addOnSuccessListener {
-
-                // Value successfully stored in the database
-                Log.d("FirebaseDatabase", "Variable value stored for this month")
-            }.addOnFailureListener { exception ->
-                // Error occurred while storing the value
-                Log.e("FirebaseDatabase", "Error storing value: $exception")
-            }
-
-
-
-            editor.putString("date", Gson().toJson(date))
-            editor.apply()
-
-
-            enterMonthlyData(monthYear, currentMonth)
-
-
-        } else {
-            studentList.clear()
-        }
-    }
-
-    private fun enterMonthlyData(monthYear: String, currentMonth: String) {
-        if (monthYear.isEmpty() || currentMonth != monthYear) {
-
-
+    private fun enterMonthlyData( currentMonth: String) {
 
 
             for (studentData: Student in studentList) {
@@ -380,7 +313,7 @@ class HomeActivity : AppCompatActivity() {
 
                     val paymentId = paymentRef.push().key!!
 
-                    val payment = com.amtron.dronamma.model.Payment(
+                    val payment = Payment(
                         paymentId,
                         studentData.id,
                         studentData.name,
@@ -434,7 +367,7 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
 
-        }
+
     }
 
     private fun bottomCloseNavOpen() {

@@ -3,16 +3,15 @@ package com.amtron.dronamma.fragment
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.amtron.dronamma.databinding.FragmentUtilityBinding
-import com.amtron.dronamma.model.Student
 import com.amtron.dronamma.model.Attendance
-import com.amtron.dronamma.model.Date
+import com.amtron.dronamma.model.Student
 import com.amtron.dronamma.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,12 +30,10 @@ class Utility : Fragment() {
 
     private lateinit var studentRef: DatabaseReference
     private lateinit var attendanceRef: DatabaseReference
-    private lateinit var dateRef: DatabaseReference
-    private lateinit var user : User
-    private lateinit var branch : String
+    private lateinit var user: User
+    private lateinit var branch: String
 
-    private var storedDate : String = ""
-    private var date: Date? = null
+    private var flag: Boolean = true
 
     private lateinit var studentList: ArrayList<Student>
 
@@ -87,7 +84,29 @@ class Utility : Fragment() {
 
         studentRef = FirebaseDatabase.getInstance().getReference("Students")
         attendanceRef = FirebaseDatabase.getInstance().getReference("Attendance")
-        dateRef = FirebaseDatabase.getInstance().getReference("Date")
+
+
+        // populate date list
+        attendanceRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (snapshot.exists()) {
+
+                    for (emSnap in snapshot.children) {
+                        val attendanceData = emSnap.getValue(Attendance::class.java)
+
+                        if (attendanceData != null && attendanceData.date.toString() == currentDate && attendanceData.branch==branch) {
+                            flag = false
+                            break
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireActivity(), "$error", Toast.LENGTH_SHORT).show()
+            }
+        })
 
 
         // populate student list
@@ -95,6 +114,8 @@ class Utility : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 if (snapshot.exists()) {
+
+                    studentList.clear()
 
                     for (emSnap in snapshot.children) {
                         val studentData = emSnap.getValue(Student::class.java)
@@ -114,56 +135,16 @@ class Utility : Fragment() {
         })
 
 
-//         Retrieve the value from the database
-        dateRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
 
-                if (snapshot.exists()) {
-
-
-                    for (emSnap in snapshot.children) {
-                        val dateData = emSnap.getValue(Date::class.java)
-
-                        if (dateData != null && dateData.branch == branch) {
-
-                            date = dateData
-
-                            storedDate = date!!.date.toString()
-
-
-                        }
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
-            }
-        })
 
 
         binding.addStudentForTodayAttendance.setOnClickListener {
 
 
-            if (storedDate.isEmpty() || storedDate != currentDate) {
-
-                date!!.date= currentDate
-                val id = date!!.id
-
-                if (id != null) {
-                    dateRef.child(id).setValue(date).addOnSuccessListener {
-
-                        // Value successfully stored in the database
-                        Log.d("FirebaseDatabase", "Variable value stored for this month")
-                    }.addOnFailureListener { exception ->
-                        // Error occurred while storing the value
-                        Log.e("FirebaseDatabase", "Error storing value: $exception")
-                    }
-                }
+            if (flag) {
 
 
-
-                for (student : Student in studentList) {
+                for (student: Student in studentList) {
 
                     val attendanceId = attendanceRef.push().key!!
 
@@ -182,18 +163,11 @@ class Utility : Fragment() {
 
                         // Add Attendance list for current date
 
-                        Toast.makeText(
-                            requireActivity(),
-                            "Attendance added for today's date",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.d("Firebase", "Attendance added for today's date")
 
                     }.addOnFailureListener {
                         Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
                     }
-
-
-
 
 
                 }

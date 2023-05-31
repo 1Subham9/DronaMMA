@@ -109,6 +109,51 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
 
         })
 
+        // Get Data from firebase
+        attendanceRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (snapshot.exists()) {
+
+                    binding.loading.visibility=View.VISIBLE
+                    binding.attendanceRecycler.visibility = View.GONE
+                    binding.noStudent.visibility=View.GONE
+
+                    attendanceList = arrayListOf()
+                    attendanceListDated = arrayListOf()
+
+                    for (emSnap in snapshot.children) {
+                        val attendanceData = emSnap.getValue(Attendance::class.java)
+
+                        if (attendanceData != null ) {
+                            attendanceList.add(attendanceData)
+                            if(attendanceData.date==selectDate){
+                                attendanceListDated.add(attendanceData)
+                            }
+
+                        }
+                    }
+
+
+                    binding.loading.visibility=View.GONE
+
+                    if(attendanceList.isNotEmpty()){
+                        binding.noStudent.visibility=View.GONE
+                        binding.attendanceRecycler.visibility = View.VISIBLE
+                    }else{
+                        binding.noStudent.visibility=View.VISIBLE
+                    }
+
+
+                    attendanceAdapter.updateList(attendanceListDated)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireActivity(), "$error", Toast.LENGTH_SHORT).show()
+            }
+        })
+
 
 
 
@@ -119,44 +164,6 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
         return binding.root
     }
 
-
-    override fun onResume() {
-        super.onResume()
-
-
-        // Get Data from firebase
-        attendanceRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                if (snapshot.exists()) {
-
-                    attendanceList = arrayListOf()
-                    attendanceListDated = arrayListOf()
-
-                    for (emSnap in snapshot.children) {
-                        val attendanceData = emSnap.getValue(Attendance::class.java)
-
-                        if (attendanceData != null) {
-                            attendanceList.add(attendanceData)
-                        }
-                    }
-
-
-                    for (attendance: Attendance in attendanceList) {
-                        if (attendance.date == selectDate) {
-                            attendanceListDated.add(attendance)
-                        }
-                    }
-
-                    attendanceAdapter.updateList(attendanceListDated)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(requireActivity(), "$error", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
 
     override fun onCheckDetails(id: String) {
         Toast.makeText(requireContext(), "Check Details Typed", Toast.LENGTH_SHORT).show()
@@ -218,6 +225,9 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
                 DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
 
                     attendanceListDated = arrayListOf()
+                    binding.attendanceRecycler.visibility = View.GONE
+                    binding.noStudent.visibility=View.GONE
+                    binding.loading.visibility=View.VISIBLE
 
 
                     binding.selectDate.text = "Date: $dayOfMonth/${month + 1}/$year"
@@ -242,6 +252,16 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
                         if (attendance.date == selectDate) {
                             attendanceListDated.add(attendance)
                         }
+                    }
+
+
+                    binding.loading.visibility=View.GONE
+
+                    if(attendanceListDated.isNotEmpty()){
+                        binding.noStudent.visibility=View.GONE
+                        binding.attendanceRecycler.visibility = View.VISIBLE
+                    }else{
+                        binding.noStudent.visibility=View.VISIBLE
                     }
 
                     attendanceAdapter.updateList(attendanceListDated)
