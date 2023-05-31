@@ -7,5 +7,7 @@
     <color name="grey">#666565</color>
     <color name="green">#1ebea5</color>
     <color name="imperial_red">#FF2400</color>
+    <color name="successColor">#4BB543</color>
+    <color name="editColor">#668cff</color>
 
 </resources>

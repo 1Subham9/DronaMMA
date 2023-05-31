@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:padding="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content">
 
@@ -12,18 +13,19 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/indian_adult_text"
+            android:id="@+id/itemNameInventory"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.6"
+            android:padding="5dp"
             android:fontFamily="@font/roboto_bold"
             android:gravity="center_vertical"
             android:text="Item name"
-            android:textColor="@color/imperial_red"
-            android:textSize="17sp" />
+            android:textColor="@color/black"
+            android:textSize="12sp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/decrement_indian_adult"
+            android:id="@+id/decrementItem"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
@@ -43,12 +45,12 @@
             app:endIconMode="none">
 
             <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                android:id="@+id/i_adult"
+                android:id="@+id/itemValue"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:maxLength="4"
-                android:inputType="number"
+                android:inputType="numberSigned"
                 android:imeOptions="actionNext"
                 android:padding="1dp"
                 android:textAlignment="center"
@@ -56,15 +58,64 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/increment_indian_adult"
+            android:id="@+id/incrementItem"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="0.1"
             app:cornerRadius="50dp"
             app:icon="@drawable/baseline_add_24"
             app:iconGravity="textStart"
             app:iconPadding="0dp" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/itemSubmit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="0.1"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="@color/successColor"
+            app:strokeWidth="2dp"
+            app:iconTint="@color/successColor"
+            app:cornerRadius="50dp"
+            app:icon="@drawable/baseline_check_24"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/itemEdit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="0.1"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="@color/editColor"
+            app:strokeWidth="2dp"
+            app:iconTint="@color/editColor"
+            app:cornerRadius="50dp"
+            app:icon="@drawable/baseline_edit_24"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/itemDelete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_weight="0.1"
+            app:cornerRadius="50dp"
+            app:icon="@drawable/baseline_delete_24"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
+
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

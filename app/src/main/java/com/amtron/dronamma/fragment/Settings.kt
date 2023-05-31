@@ -38,7 +38,7 @@ class Settings : Fragment(), BatchAndClassAdapter.ItemClickInterface {
     private lateinit var classAdapter: BatchAndClassAdapter
 
 
-    lateinit var messageDialog: AlertDialog
+    private lateinit var messageDialog: AlertDialog
 
 
     private lateinit var sharedPreferences: SharedPreferences

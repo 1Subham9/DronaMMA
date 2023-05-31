@@ -85,11 +85,11 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
         binding.searchStudentName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // We we add something later
-
+                attendanceListDated = arrayListOf()
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                attendanceListDated.clear()
+
 
                 for (attendance: Attendance in attendanceList) {
 
