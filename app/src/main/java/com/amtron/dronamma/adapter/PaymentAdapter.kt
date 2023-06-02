@@ -1,21 +1,23 @@
 package com.amtron.dronamma.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.amtron.dronamma.R
 import com.amtron.dronamma.model.Payment
 
-class PaymentAdapter(private val context: Context,private val itemClickInterface: ItemClickInterface) :
-    RecyclerView.Adapter<PaymentAdapter.ViewHolder>() {
+class PaymentAdapter(
+    private val context: Context,
+    private val itemClickInterface: ItemClickInterface
+) : RecyclerView.Adapter<PaymentAdapter.ViewHolder>() {
 
     private val allData = ArrayList<Payment>()
+    private val successColor = ContextCompat.getColor(context, R.color.successColor)
+    private val editColor = ContextCompat.getColor(context, R.color.editColor)
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -29,8 +31,8 @@ class PaymentAdapter(private val context: Context,private val itemClickInterface
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_payment, parent, false)
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_payment, parent, false)
         return ViewHolder(itemView)
     }
 
@@ -49,26 +51,20 @@ class PaymentAdapter(private val context: Context,private val itemClickInterface
         }
 
 
-        if(allData[position].payment == 1){
+        if (allData[position].payment == 1) {
             holder.paymentStatus.text = "Paid"
-            val successColor = ContextCompat.getColor(context, R.color.successColor)
             holder.paymentStatus.setTextColor(successColor)
-        }else{
+        } else {
             holder.paymentStatus.text = "Click to Pay"
-            val editColor = ContextCompat.getColor(context, R.color.editColor)
             holder.paymentStatus.setTextColor(editColor)
         }
 
 
         holder.paymentStatus.setOnClickListener {
-            if(allData[position].payment == 0){
+            if (allData[position].payment == 0) {
                 itemClickInterface.pay(allData[position])
             }
         }
-
-
-
-
 
     }
 

@@ -4,19 +4,19 @@ import android.app.DatePickerDialog
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.amtron.dronamma.databinding.FragmentAddStudentBinding
 import com.amtron.dronamma.model.Attendance
 import com.amtron.dronamma.model.BatchClassModel
+import com.amtron.dronamma.model.Payment
 import com.amtron.dronamma.model.Student
 import com.amtron.dronamma.model.User
-import com.amtron.dronamma.model.Payment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -35,10 +35,7 @@ class AddStudent : Fragment() {
     private val genderValue = mutableListOf<String>()
     private val monthValue = mutableListOf<String>()
 
-
-    private var advance = 0.0
     private var fees = 0.0
-    private var actualFees = 0.0
     private var month = 0
 
     private lateinit var birthDate: String
@@ -206,34 +203,20 @@ class AddStudent : Fragment() {
                 binding.spinnerGender.error = "Please select a gender"
             }
 
-
-
             if (birthDate == "") {
                 binding.selectDate.setTextColor(Color.parseColor("#FF0000"))
             }
-
-
-
 
             if (birthDate != "" && binding.studentName.text!!.isNotEmpty() && binding.studentAddress.text!!.isNotEmpty() && binding.mobileNumber.text!!.isNotEmpty() && binding.feesAmount.text!!.isNotEmpty() && gender.isNotEmpty()) {
 
 
                 val studentId = studentRef.push().key!!
 
-
-                actualFees = "${binding.feesAmount.text}".toDouble()
-
-
-                fees = actualFees
+                fees = "${binding.feesAmount.text}".toDouble()
 
 
                 if (month > 0) {
                     isAdvance = 1
-                    advance = fees
-                    fees /= month
-                    advance -= fees
-                } else {
-                    advance = 0.0
                 }
 
 
@@ -249,7 +232,7 @@ class AddStudent : Fragment() {
                     branch,
                     isAdvance,
                     fees,
-                    advance
+                    month
                 )
 
 
@@ -280,7 +263,7 @@ class AddStudent : Fragment() {
                             paymentId,
                             studentId,
                             "${binding.studentName.text}",
-                            actualFees,
+                            fees,
                             "$setMonth-$myYear",
                             1,
                             branch,
@@ -292,7 +275,7 @@ class AddStudent : Fragment() {
 
 
                             Toast.makeText(
-                                requireContext(), "Data inserted successfully", Toast.LENGTH_SHORT
+                                requireContext(), "Student added successfully", Toast.LENGTH_SHORT
                             ).show()
 
                         }.addOnFailureListener {

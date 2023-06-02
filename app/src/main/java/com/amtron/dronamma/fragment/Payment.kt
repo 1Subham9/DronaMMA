@@ -240,7 +240,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     for (emSnap in snapshot.children) {
                         val studentData = emSnap.getValue(Student::class.java)
 
-                        if (studentData != null && studentData.advance!! < 100.00 && studentData.paid == 1 && studentData.branch == branch) {
+                        if (studentData != null && studentData.month == 0 && studentData.paid == 1 && studentData.branch == branch) {
 
                             advanceList.add(studentData)
 

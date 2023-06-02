@@ -348,9 +348,9 @@ class HomeActivity : AppCompatActivity() {
                 } else {
 
 
-                    if (studentData.advance!! > 100.00) {
-                        studentData.advance = studentData.advance!! - studentData.fees!!
+                    if (studentData.month!! > 0) {
 
+                        studentData.month = studentData.month!! - 1
 
                         studentRef.child(studentData.id.toString()).setValue(studentData)
                             .addOnCompleteListener {

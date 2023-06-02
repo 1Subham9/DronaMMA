@@ -12,5 +12,5 @@ data class Student(
     val branch: String?=null,
     val paid: Int?=null,
     var fees : Double?=null,
-    var advance : Double?=null,
+    var month : Int?=null,
 )
