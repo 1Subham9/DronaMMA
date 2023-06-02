@@ -10,6 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -40,7 +43,6 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     private lateinit var messageDialog: AlertDialog
 
 
-
     private lateinit var paymentList: ArrayList<Payment>
     private lateinit var paymentListNew: ArrayList<Payment>
     private lateinit var advanceList: ArrayList<Student>
@@ -57,8 +59,15 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
     private lateinit var yearValue: ArrayList<String>
     private lateinit var monthValue: ArrayList<String>
+    private lateinit var monthValueNumber: ArrayList<String>
+
+
+
 
     private lateinit var date: String
+    private lateinit var currentMonth: String
+
+    private var monthNumber = 0
 
     private lateinit var month: String
     private lateinit var year: String
@@ -75,6 +84,12 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         binding = FragmentPaymentBinding.inflate(inflater, container, false)
 
         packageManager = requireContext().packageManager
+
+        monthValueNumber = arrayListOf()
+
+        for (i in 0..12) {
+            monthValueNumber.add(i.toString())
+        }
 
 
         sharedPreferences =
@@ -117,6 +132,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         }
 
         date = "$setMonth-$myYear"
+        currentMonth="$setMonth-$myYear"
 
 
 
@@ -132,7 +148,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
                 for (payment: Payment in paymentList) {
 
-                    if (payment.branch == branch && payment.date==date) {
+                    if (payment.branch == branch && payment.date == date) {
                         val list: String? = payment.name?.lowercase()?.replace(" ", "")
                         val input: String = s.toString().lowercase().replace(" ", "")
 
@@ -176,7 +192,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
         // populating payment adapter
         binding.paymentRecycler.layoutManager = LinearLayoutManager(requireActivity())
-        paymentRecycler = PaymentAdapter(requireContext(),this)
+        paymentRecycler = PaymentAdapter(requireContext(), this)
         binding.paymentRecycler.adapter = paymentRecycler
 
 
@@ -321,7 +337,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     paymentListNew.clear()
 
                     for (payment: Payment in paymentList) {
-                        if (payment.payment == 1 && payment.date == date && payment.branch==branch) {
+                        if (payment.payment == 1 && payment.date == date && payment.branch == branch) {
                             paymentListNew.add(payment)
                         }
                     }
@@ -348,7 +364,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     paymentListNew.clear()
 
                     for (payment: Payment in paymentList) {
-                        if (payment.payment == 0 && payment.date == date && payment.branch==branch) {
+                        if (payment.payment == 0 && payment.date == date && payment.branch == branch) {
                             paymentListNew.add(payment)
                         }
                     }
@@ -369,8 +385,103 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         return binding.root
     }
 
-    override fun addPayment(id: String) {
-        // Going to Student activity
+    override fun addPayment(student: Student) {
+
+
+        val mDialog = AlertDialog.Builder(requireContext())
+        val inflater = layoutInflater
+        val mDialogView = inflater.inflate(R.layout.update_advance_payment, null)
+
+        mDialog.setView(mDialogView)
+
+        val itemPrice = mDialogView.findViewById<EditText>(R.id.itemPrice)
+        val cancel = mDialogView.findViewById<Button>(R.id.cancel)
+        val pay = mDialogView.findViewById<Button>(R.id.pay)
+        val selectMonth = mDialogView.findViewById<AutoCompleteTextView>(R.id.selectMonth)
+
+        val monthAdapter = ArrayAdapter(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item, monthValueNumber
+        )
+
+        selectMonth.setAdapter(monthAdapter)
+
+
+        selectMonth.setOnItemClickListener { parent, view, position, id ->
+            monthNumber = monthValueNumber[position].toInt()
+            student.month=monthNumber
+
+        }
+
+        itemPrice.setText(student.fees.toString())
+
+        val alertDialog = mDialog.create()
+        alertDialog.show()
+
+        cancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        pay.setOnClickListener {
+
+
+            if (itemPrice.text?.isEmpty() == true) {
+                itemPrice.error = "Please enter the fees amount"
+            } else {
+                val id = student.id.toString()
+
+
+                if(monthNumber==0){
+                    student.paid=0
+                }
+
+
+                student.fees = itemPrice.text.toString().toDouble()
+
+                studentRef.child(id).setValue(student).addOnCompleteListener {
+
+
+                    // Add Payment for current date
+
+                    val paymentId = paymentRef.push().key!!
+
+                    val payment = Payment(
+                        paymentId,
+                        student.id,
+                        student.name,
+                        student.fees,
+                        currentMonth,
+                        1,
+                        branch,
+                        student.batch,
+                        student.className
+                    )
+
+                    paymentRef.child(paymentId).setValue(payment).addOnCompleteListener {
+
+
+                        Toast.makeText(
+                            requireContext(), "Payment for ${student.name} accepted", Toast.LENGTH_SHORT
+                        ).show()
+
+                    }.addOnFailureListener {
+                        Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+
+
+
+                    itemPrice.text?.clear()
+
+                    alertDialog.dismiss()
+
+                }.addOnFailureListener {
+                    Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }
+
+
     }
 
     override fun sendNotification(id: String) {
@@ -421,7 +532,9 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             if (id != null) {
                 paymentRef.child(id).setValue(payment).addOnCompleteListener {
                     Toast.makeText(
-                        requireContext(), "Payment of ${payment.name} is completed", Toast.LENGTH_SHORT
+                        requireContext(),
+                        "Payment of ${payment.name} is completed",
+                        Toast.LENGTH_SHORT
                     ).show()
 
                 }.addOnFailureListener {
@@ -443,10 +556,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         messageDialog.show()
 
 
-
     }
-
-
 
 
     private fun setMonthSpinner() {

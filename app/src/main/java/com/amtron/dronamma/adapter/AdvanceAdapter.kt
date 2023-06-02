@@ -17,11 +17,11 @@ class AdvanceAdapter(private val itemClickInterface: ItemClickInterface) :
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val studentName = itemView.findViewById<TextView>(R.id.attendanceName)
-        val className = itemView.findViewById<TextView>(R.id.attendanceClass)
-        val batchName = itemView.findViewById<TextView>(R.id.attendanceBatch)
-        val sendNotification = itemView.findViewById<TextView>(R.id.sendNotification)
-        val addPayment = itemView.findViewById<TextView>(R.id.addPayment)
+        val studentName = itemView.findViewById<TextView>(R.id.attendanceName)!!
+        val className = itemView.findViewById<TextView>(R.id.attendanceClass)!!
+        val batchName = itemView.findViewById<TextView>(R.id.attendanceBatch)!!
+        val sendNotification = itemView.findViewById<TextView>(R.id.sendNotification)!!
+        val addPayment = itemView.findViewById<TextView>(R.id.addPayment)!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -45,7 +45,7 @@ class AdvanceAdapter(private val itemClickInterface: ItemClickInterface) :
         }
 
         holder.addPayment.setOnClickListener {
-            itemClickInterface.addPayment(allData[position].id.toString())
+            itemClickInterface.addPayment(allData[position])
         }
 
     }
@@ -60,7 +60,7 @@ class AdvanceAdapter(private val itemClickInterface: ItemClickInterface) :
 
 
     interface ItemClickInterface {
-        fun addPayment(id: String)
+        fun addPayment(student: Student)
         fun sendNotification(id: String)
     }
 }

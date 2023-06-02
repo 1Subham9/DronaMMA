@@ -50,11 +50,9 @@ class AddStudent : Fragment() {
     private lateinit var batchClassRef: DatabaseReference
     private lateinit var attendanceRef: DatabaseReference
 
-
     private lateinit var currentDate: String
 
     private var isAdvance by Delegates.notNull<Int>()
-
 
     private lateinit var batchNameList: ArrayList<String>
     private lateinit var classNameList: ArrayList<String>
@@ -84,7 +82,6 @@ class AddStudent : Fragment() {
         attendanceRef = FirebaseDatabase.getInstance().getReference("Attendance")
 
         isAdvance = 0
-
 
         val cal = Calendar.getInstance()
 
@@ -277,6 +274,25 @@ class AddStudent : Fragment() {
                             Toast.makeText(
                                 requireContext(), "Student added successfully", Toast.LENGTH_SHORT
                             ).show()
+
+
+                            binding.studentName.text!!.clear()
+                            binding.mobileNumber.text!!.clear()
+                            binding.studentAddress.text!!.clear()
+                            binding.feesAmount.text!!.clear()
+                            className=""
+                            batch=""
+                            month=0
+                            isAdvance=0
+                            birthDate=""
+                            gender=""
+
+                            binding.spinnerGender.text.clear()
+                            binding.selectDate.text = "Select Birth date"
+                            binding.selectClass.text.clear()
+                            binding.selectBatch.text.clear()
+                            binding.selectMonth.text.clear()
+
 
                         }.addOnFailureListener {
                             Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT)

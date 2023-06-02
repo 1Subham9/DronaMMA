@@ -34,7 +34,6 @@ class AddInventory : Fragment(), InventoryAdapter.ItemClickInterface {
     private lateinit var inventoryRef: DatabaseReference
     private lateinit var inventoryAdapter: InventoryAdapter
 
-
     private lateinit var inventoryList: ArrayList<Inventory>
     private lateinit var messageDialog: AlertDialog
 
@@ -202,6 +201,7 @@ class AddInventory : Fragment(), InventoryAdapter.ItemClickInterface {
     }
 
     override fun updateItem(inventory: Inventory) {
+
         val mDialog = AlertDialog.Builder(requireContext())
         val inflater = layoutInflater
         val mDialogView = inflater.inflate(R.layout.update_inventory_item, null)
@@ -262,6 +262,8 @@ class AddInventory : Fragment(), InventoryAdapter.ItemClickInterface {
             }
 
         }
+
+
     }
 
 
