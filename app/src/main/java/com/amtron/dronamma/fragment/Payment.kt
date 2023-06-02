@@ -1,28 +1,23 @@
 package com.amtron.dronamma.fragment
 
-import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amtron.dronamma.R
 import com.amtron.dronamma.adapter.AdvanceAdapter
-import com.amtron.dronamma.adapter.AttendanceAdapter
 import com.amtron.dronamma.adapter.PaymentAdapter
-import com.amtron.dronamma.databinding.FragmentAttendanceBinding
 import com.amtron.dronamma.databinding.FragmentPaymentBinding
 import com.amtron.dronamma.model.Payment
 import com.amtron.dronamma.model.Student
@@ -34,7 +29,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import org.json.JSONObject
 import java.util.Calendar
 
 
@@ -43,6 +37,8 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     private lateinit var binding: FragmentPaymentBinding
 
     private lateinit var packageManager: PackageManager
+    private lateinit var messageDialog: AlertDialog
+
 
 
     private lateinit var paymentList: ArrayList<Payment>
@@ -70,6 +66,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
     private lateinit var user: User
+    private lateinit var branch: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -88,15 +85,18 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
         )
 
+        branch = user.branch.toString()
+
         screen = "regular"
 
         paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
         studentRef = FirebaseDatabase.getInstance().getReference("Students")
 
         val cal = Calendar.getInstance()
-
         val myYear = cal.get(Calendar.YEAR)
         val myMonth = cal.get(Calendar.MONTH)
+
+
 
         paymentList = arrayListOf()
         advanceList = arrayListOf()
@@ -132,23 +132,30 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
                 for (payment: Payment in paymentList) {
 
-                    val list: String? = payment.name?.lowercase()?.replace(" ", "")
-                    val input: String = s.toString().lowercase().replace(" ", "")
+                    if (payment.branch == branch && payment.date==date) {
+                        val list: String? = payment.name?.lowercase()?.replace(" ", "")
+                        val input: String = s.toString().lowercase().replace(" ", "")
 
-                    if (input.let { list?.contains(it) } == true) {
-                        paymentListNew.add(payment)
+                        if (input.let { list?.contains(it) } == true) {
+                            paymentListNew.add(payment)
+                        }
                     }
+
                 }
 
                 advanceListNew.clear()
 
 
-                for (student: Student in advanceList) {
-                    val list: String? = student.name?.lowercase()?.replace(" ", "")
-                    val input: String = s.toString().lowercase().replace(" ", "")
 
-                    if (input.let { list?.contains(it) } == true) {
-                        advanceListNew.add(student)
+                for (student: Student in advanceList) {
+
+                    if (student.branch == branch) {
+                        val list: String? = student.name?.lowercase()?.replace(" ", "")
+                        val input: String = s.toString().lowercase().replace(" ", "")
+
+                        if (input.let { list?.contains(it) } == true) {
+                            advanceListNew.add(student)
+                        }
                     }
                 }
 
@@ -169,7 +176,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
         // populating payment adapter
         binding.paymentRecycler.layoutManager = LinearLayoutManager(requireActivity())
-        paymentRecycler = PaymentAdapter(this)
+        paymentRecycler = PaymentAdapter(requireContext(),this)
         binding.paymentRecycler.adapter = paymentRecycler
 
 
@@ -233,7 +240,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     for (emSnap in snapshot.children) {
                         val studentData = emSnap.getValue(Student::class.java)
 
-                        if (studentData != null && studentData.advance!! < 100.00 && studentData.paid == 1 && studentData.branch == user.branch) {
+                        if (studentData != null && studentData.advance!! < 100.00 && studentData.paid == 1 && studentData.branch == branch) {
 
                             advanceList.add(studentData)
 
@@ -314,7 +321,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     paymentListNew.clear()
 
                     for (payment: Payment in paymentList) {
-                        if (payment.payment == 1 && payment.date == date) {
+                        if (payment.payment == 1 && payment.date == date && payment.branch==branch) {
                             paymentListNew.add(payment)
                         }
                     }
@@ -341,7 +348,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     paymentListNew.clear()
 
                     for (payment: Payment in paymentList) {
-                        if (payment.payment == 0 && payment.date == date) {
+                        if (payment.payment == 0 && payment.date == date && payment.branch==branch) {
                             paymentListNew.add(payment)
                         }
                     }
@@ -378,7 +385,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                 student = dataSnapshot.getValue(Student::class.java)!!
 
 
-                var phoneNumber = "${student.mobile}" // Replace with the recipient's phone number
+                val phoneNumber = "${student.mobile}" // Replace with the recipient's phone number
                 val message =
                     "Hello,${student.name}  please complete your payment" // Replace with the message content
 
@@ -391,31 +398,55 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         })
     }
 
-    override fun setCheckBoxTrue(payment: Payment) {
-        payment.payment = 1
+    override fun pay(payment: Payment) {
 
-        paymentRef.child(payment.payment_id.toString()).setValue(payment).addOnCompleteListener {
-//            Toast.makeText(
-//                requireContext(), "Payment of ${payment.name} is Accepted", Toast.LENGTH_SHORT
-//            ).show()
 
-        }.addOnFailureListener {
-            Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
+        val builder = AlertDialog.Builder(requireContext())
+
+        val ans = payment.name
+        val id = payment.payment_id
+        val month = payment.date
+
+        builder.setTitle("Payment")
+        //set message for alert dialog
+        builder.setMessage("Are you sure you want to mark student $ans as paid for the date $month?")
+        builder.setIcon(R.drawable.baseline_currency_rupee_24)
+
+        //performing positive action
+        builder.setPositiveButton("Confirm") { dialogInterface, which ->
+
+
+            payment.payment = 1
+
+            if (id != null) {
+                paymentRef.child(id).setValue(payment).addOnCompleteListener {
+                    Toast.makeText(
+                        requireContext(), "Payment of ${payment.name} is completed", Toast.LENGTH_SHORT
+                    ).show()
+
+                }.addOnFailureListener {
+                    Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            messageDialog.dismiss()
         }
+
+        //performing negative action
+        builder.setNegativeButton("Cancel") { dialogInterface, which ->
+            messageDialog.dismiss()
+        }
+        // Create the AlertDialog
+        messageDialog = builder.create()
+        // Set other dialog properties
+        messageDialog.setCancelable(false)
+        messageDialog.show()
+
+
+
     }
 
-    override fun setCheckBoxFalse(payment: Payment) {
-        payment.payment = 0
 
-        paymentRef.child(payment.payment_id.toString()).setValue(payment).addOnCompleteListener {
-//            Toast.makeText(
-//                requireContext(), "Payment of ${payment.name} is Removed", Toast.LENGTH_SHORT
-//            ).show()
-
-        }.addOnFailureListener {
-            Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_SHORT).show()
-        }
-    }
 
 
     private fun setMonthSpinner() {
@@ -542,9 +573,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             requireContext().startActivity(intent)
         } catch (ex: Exception) {
             Toast.makeText(
-                requireContext(),
-                "WhatsApp not Installed in your mobile",
-                Toast.LENGTH_SHORT
+                requireContext(), "WhatsApp not Installed in your mobile", Toast.LENGTH_SHORT
             ).show()
         }
 

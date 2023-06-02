@@ -36,12 +36,14 @@
                     android:text="Student Name"
                     android:textColor="@color/black" />
 
-                <CheckBox
-                    android:id="@+id/checkbox_attendance"
+                <TextView
+                    android:id="@+id/paymentStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:fontFamily="@font/archivo_bold"
-                    android:text="Paid" />
+                    android:textColor="@color/editColor"
+                    android:textSize="12sp"
+                    android:text="Click to pay" />
 
 
             </LinearLayout>

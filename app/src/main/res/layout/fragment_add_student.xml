@@ -25,7 +25,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:hint="Enter Name"
                 android:minHeight="48dp"
                 app:helperText="Required*"
@@ -36,6 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/baseline_person_24"
+                    android:textSize="12sp"
                     android:drawablePadding="5dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -44,7 +46,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:hint="Enter Number"
                 android:minHeight="48dp"
                 app:helperText="Required*"
@@ -54,6 +57,7 @@
                     android:id="@+id/mobileNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="12sp"
                     android:drawableStart="@drawable/baseline_call_24"
                     android:drawablePadding="5dp"
                     android:inputType="number" />
@@ -63,7 +67,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:hint="Select Gender"
                 android:minHeight="48dp"
                 app:helperText="Required*"
@@ -73,6 +78,7 @@
                     android:id="@+id/spinnerGender"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:textSize="12sp"
                     android:layout_weight="1"
                     android:drawablePadding="5dp"
                     android:inputType="none" />
@@ -86,7 +92,8 @@
                 android:drawablePadding="10dp"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:text="Select Birth Date"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -98,7 +105,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:hint="Enter Address"
                 android:minHeight="48dp"
                 app:helperText="Required*"
@@ -108,6 +116,7 @@
                     android:id="@+id/studentAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="12sp"
                     android:drawableStart="@drawable/baseline_home_24"
                     android:drawablePadding="5dp" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -117,7 +126,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:hint="Fees Amount"
                 android:minHeight="48dp"
                 app:helperText="Required*"
@@ -127,6 +137,7 @@
                     android:id="@+id/feesAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="12sp"
                     android:drawablePadding="5dp"
                     android:inputType="numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -136,7 +147,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:hint="Select Batch"
                 android:minHeight="48dp">
 
@@ -145,6 +157,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:textSize="12sp"
                     android:drawablePadding="5dp"
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -154,7 +167,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:hint="Select Class"
                 android:minHeight="48dp">
 
@@ -163,6 +177,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:textSize="12sp"
                     android:drawablePadding="5dp"
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -171,7 +186,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:hint="Select Month"
                 android:minHeight="48dp">
 
@@ -180,6 +196,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:textSize="12sp"
                     android:drawablePadding="5dp"
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -187,7 +204,8 @@
 
             <Button
                 android:id="@+id/submitStudent"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:textSize="20sp"
                 android:layout_width="match_parent"
                 android:elevation="10dp"

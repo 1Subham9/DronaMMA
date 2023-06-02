@@ -40,7 +40,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.2"
+            android:layout_weight="0.3"
             android:orientation="horizontal"
             app:endIconMode="none">
 
@@ -54,7 +54,7 @@
                 android:imeOptions="actionNext"
                 android:padding="1dp"
                 android:textAlignment="center"
-                android:textSize="15sp" />
+                android:textSize="12sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton

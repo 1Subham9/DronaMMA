@@ -1,26 +1,31 @@
 package com.amtron.dronamma.adapter
 
+import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.amtron.dronamma.R
 import com.amtron.dronamma.model.Payment
 
-class PaymentAdapter(private val itemClickInterface: ItemClickInterface) :
+class PaymentAdapter(private val context: Context,private val itemClickInterface: ItemClickInterface) :
     RecyclerView.Adapter<PaymentAdapter.ViewHolder>() {
 
     private val allData = ArrayList<Payment>()
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val studentName = itemView.findViewById<TextView>(R.id.attendanceName)
-        val className = itemView.findViewById<TextView>(R.id.attendanceClass)
-        val batchName = itemView.findViewById<TextView>(R.id.attendanceBatch)
-        val sendNotification = itemView.findViewById<TextView>(R.id.sendNotification)
-        val checkBox = itemView.findViewById<CheckBox>(R.id.checkbox_attendance)
+        val studentName = itemView.findViewById<TextView>(R.id.attendanceName)!!
+        val className = itemView.findViewById<TextView>(R.id.attendanceClass)!!
+        val batchName = itemView.findViewById<TextView>(R.id.attendanceBatch)!!
+        val sendNotification = itemView.findViewById<TextView>(R.id.sendNotification)!!
+        val paymentStatus = itemView.findViewById<TextView>(R.id.paymentStatus)!!
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -44,18 +49,26 @@ class PaymentAdapter(private val itemClickInterface: ItemClickInterface) :
         }
 
 
+        if(allData[position].payment == 1){
+            holder.paymentStatus.text = "Paid"
+            val successColor = ContextCompat.getColor(context, R.color.successColor)
+            holder.paymentStatus.setTextColor(successColor)
+        }else{
+            holder.paymentStatus.text = "Click to Pay"
+            val editColor = ContextCompat.getColor(context, R.color.editColor)
+            holder.paymentStatus.setTextColor(editColor)
+        }
 
 
-        holder.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            // Do something when the checkbox state changes
-            if (isChecked) {
-                itemClickInterface.setCheckBoxTrue(allData[position])
-            } else {
-                itemClickInterface.setCheckBoxFalse(allData[position])
+        holder.paymentStatus.setOnClickListener {
+            if(allData[position].payment == 0){
+                itemClickInterface.pay(allData[position])
             }
         }
 
-        holder.checkBox.isChecked = allData[position].payment == 1
+
+
+
 
     }
 
@@ -70,7 +83,6 @@ class PaymentAdapter(private val itemClickInterface: ItemClickInterface) :
 
     interface ItemClickInterface {
         fun sendNotification(id: String)
-        fun setCheckBoxTrue(payment: Payment)
-        fun setCheckBoxFalse(payment: Payment)
+        fun pay(payment: Payment)
     }
 }
