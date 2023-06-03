@@ -12,6 +12,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.amtron.dronamma.databinding.FragmentAddStudentBinding
+import com.amtron.dronamma.helper.Common.Companion.attendanceRef
+import com.amtron.dronamma.helper.Common.Companion.batchClassRef
+import com.amtron.dronamma.helper.Common.Companion.paymentRef
+import com.amtron.dronamma.helper.Common.Companion.studentRef
 import com.amtron.dronamma.model.Attendance
 import com.amtron.dronamma.model.BatchClassModel
 import com.amtron.dronamma.model.Payment
@@ -19,8 +23,6 @@ import com.amtron.dronamma.model.Student
 import com.amtron.dronamma.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -45,10 +47,6 @@ class AddStudent : Fragment() {
     private lateinit var batch: String
     private lateinit var branch: String
 
-    private lateinit var paymentRef: DatabaseReference
-    private lateinit var studentRef: DatabaseReference
-    private lateinit var batchClassRef: DatabaseReference
-    private lateinit var attendanceRef: DatabaseReference
 
     private lateinit var currentDate: String
 
@@ -76,10 +74,7 @@ class AddStudent : Fragment() {
             sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
         )
 
-        paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
-        studentRef = FirebaseDatabase.getInstance().getReference("Students")
-        batchClassRef = FirebaseDatabase.getInstance().getReference("BatchClass")
-        attendanceRef = FirebaseDatabase.getInstance().getReference("Attendance")
+
 
         isAdvance = 0
 
@@ -280,12 +275,12 @@ class AddStudent : Fragment() {
                             binding.mobileNumber.text!!.clear()
                             binding.studentAddress.text!!.clear()
                             binding.feesAmount.text!!.clear()
-                            className=""
-                            batch=""
-                            month=0
-                            isAdvance=0
-                            birthDate=""
-                            gender=""
+                            className = ""
+                            batch = ""
+                            month = 0
+                            isAdvance = 0
+                            birthDate = ""
+                            gender = ""
 
                             binding.spinnerGender.text.clear()
                             binding.selectDate.text = "Select Birth date"

@@ -78,13 +78,17 @@
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/whatsapp"/>
+
                 <TextView
                     android:id="@+id/sendNotification"
-                    android:layout_width="0dp"
-                    android:drawableStart="@drawable/outline_message_24"
+                    android:layout_width="wrap_content"
                     android:drawablePadding="5dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
                     android:text="Send Notification..>>"
                     android:textColor="@color/green"
                     android:textSize="12sp"

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.StudentActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="#ebe1c5"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="5sp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:background="@drawable/rounded_border"
+            android:padding="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Subham Kumar Ahir"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/gender"
+                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/black"
+                android:text="Gender: Male"
+                android:textSize="14sp"
+                android:background="@drawable/rounded_border"
+                android:padding="5dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_bold"
+                android:gravity="center"
+                android:text="Age: 27"
+                android:textSize="14sp"
+                android:background="@drawable/rounded_border"
+                android:padding="10dp"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/className"
+                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:text="Class: MMA"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="14sp"
+                android:background="@drawable/rounded_border"
+                android:padding="10dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/batch"
+                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_bold"
+                android:gravity="center"
+                android:text="Batch: Batch1"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:background="@drawable/rounded_border"
+                android:padding="10dp"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/mobile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="5sp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/rounded_border"
+            android:padding="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Mobile: 6003690921"/>
+
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="5sp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/rounded_border"
+            android:padding="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Address:\nHouse no-27, A.G. office Road, Beltola"/>
+
+
+        <TextView
+            android:id="@+id/payment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="5sp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:background="@drawable/rounded_border"
+            android:padding="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Payment Type: Regular"/>
+
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

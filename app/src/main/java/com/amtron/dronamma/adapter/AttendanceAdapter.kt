@@ -18,11 +18,11 @@ class AttendanceAdapter(private val itemClickInterface: ItemClickInterface) :
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val studentName = itemView.findViewById<TextView>(R.id.attendanceName)
-        val className = itemView.findViewById<TextView>(R.id.attendanceClass)
-        val batchName = itemView.findViewById<TextView>(R.id.attendanceBatch)
-        val checkDetails = itemView.findViewById<TextView>(R.id.attendanceCheckDetails)
-        val checkBox = itemView.findViewById<CheckBox>(R.id.checkbox_attendance)
+        val studentName = itemView.findViewById<TextView>(R.id.attendanceName)!!
+        val className = itemView.findViewById<TextView>(R.id.attendanceClass)!!
+        val batchName = itemView.findViewById<TextView>(R.id.attendanceBatch)!!
+        val checkDetails = itemView.findViewById<TextView>(R.id.attendanceCheckDetails)!!
+        val checkBox = itemView.findViewById<CheckBox>(R.id.checkbox_attendance)!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

@@ -1,28 +1,25 @@
 package com.amtron.dronamma.fragment
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.amtron.dronamma.activity.StudentActivity
 import com.amtron.dronamma.adapter.AttendanceAdapter
-import com.amtron.dronamma.adapter.BatchAndClassAdapter
-import com.amtron.dronamma.databinding.FragmentAddStudentBinding
 import com.amtron.dronamma.databinding.FragmentAttendanceBinding
+import com.amtron.dronamma.helper.Common.Companion.attendanceList
+import com.amtron.dronamma.helper.Common.Companion.attendanceRef
 import com.amtron.dronamma.model.Attendance
-import com.amtron.dronamma.model.BatchClassModel
-import com.amtron.dronamma.model.Payment
-import com.amtron.dronamma.model.Student
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.util.Calendar
 
@@ -30,8 +27,6 @@ import java.util.Calendar
 class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
 
     private lateinit var binding: FragmentAttendanceBinding
-    private lateinit var attendanceRef: DatabaseReference
-    private lateinit var attendanceList: ArrayList<Attendance>
     private lateinit var attendanceListDated: ArrayList<Attendance>
     private lateinit var attendanceAdapter: AttendanceAdapter
     private lateinit var selectDate: String
@@ -43,7 +38,6 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
         // Inflate the layout for this fragment
         binding = FragmentAttendanceBinding.inflate(inflater, container, false)
 
-        attendanceRef = FirebaseDatabase.getInstance().getReference("Attendance")
 
         resumeFunction()
 
@@ -91,12 +85,12 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
 
-                for (attendance: Attendance in attendanceList) {
+                for (attendance: Attendance in attendanceList!!) {
 
                     val list: String? = attendance.name?.lowercase()?.replace(" ", "")
                     val input: String = s.toString().lowercase().replace(" ", "")
 
-                    if (input.let { list?.contains(it) } == true && attendance.date==selectDate) {
+                    if (input.let { list?.contains(it) } == true && attendance.date == selectDate) {
                         attendanceListDated.add(attendance)
                     }
                 }
@@ -118,19 +112,19 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
 
                 if (snapshot.exists()) {
 
-                    binding.loading.visibility=View.VISIBLE
+                    binding.loading.visibility = View.VISIBLE
                     binding.attendanceRecycler.visibility = View.GONE
-                    binding.noStudent.visibility=View.GONE
+                    binding.noStudent.visibility = View.GONE
 
-                    attendanceList.clear()
+                    attendanceList!!.clear()
                     attendanceListDated.clear()
 
                     for (emSnap in snapshot.children) {
                         val attendanceData = emSnap.getValue(Attendance::class.java)
 
-                        if (attendanceData != null ) {
-                            attendanceList.add(attendanceData)
-                            if(attendanceData.date==selectDate){
+                        if (attendanceData != null) {
+                            attendanceList!!.add(attendanceData)
+                            if (attendanceData.date == selectDate) {
                                 attendanceListDated.add(attendanceData)
                             }
 
@@ -138,13 +132,13 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
                     }
 
 
-                    binding.loading.visibility=View.GONE
+                    binding.loading.visibility = View.GONE
 
-                    if(attendanceList.isNotEmpty()){
-                        binding.noStudent.visibility=View.GONE
+                    if (attendanceList!!.isNotEmpty()) {
+                        binding.noStudent.visibility = View.GONE
                         binding.attendanceRecycler.visibility = View.VISIBLE
-                    }else{
-                        binding.noStudent.visibility=View.VISIBLE
+                    } else {
+                        binding.noStudent.visibility = View.VISIBLE
                     }
 
 
@@ -169,7 +163,9 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
 
 
     override fun onCheckDetails(id: String) {
-        Toast.makeText(requireContext(), "Check Details Typed", Toast.LENGTH_SHORT).show()
+        val intent = Intent(requireActivity(),StudentActivity::class.java)
+        intent.putExtra("id",id)
+        startActivity(intent)
     }
 
     override fun setCheckBoxTrue(attendance: Attendance) {
@@ -229,8 +225,8 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
 
                     attendanceListDated = arrayListOf()
                     binding.attendanceRecycler.visibility = View.GONE
-                    binding.noStudent.visibility=View.GONE
-                    binding.loading.visibility=View.VISIBLE
+                    binding.noStudent.visibility = View.GONE
+                    binding.loading.visibility = View.VISIBLE
 
 
                     binding.selectDate.text = "Date: $dayOfMonth/${month + 1}/$year"
@@ -251,20 +247,20 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
 
                     selectDate = "$year-$setMonth-$setDate"
 
-                    for (attendance: Attendance in attendanceList) {
+                    for (attendance: Attendance in attendanceList!!) {
                         if (attendance.date == selectDate) {
                             attendanceListDated.add(attendance)
                         }
                     }
 
 
-                    binding.loading.visibility=View.GONE
+                    binding.loading.visibility = View.GONE
 
-                    if(attendanceListDated.isNotEmpty()){
-                        binding.noStudent.visibility=View.GONE
+                    if (attendanceListDated.isNotEmpty()) {
+                        binding.noStudent.visibility = View.GONE
                         binding.attendanceRecycler.visibility = View.VISIBLE
-                    }else{
-                        binding.noStudent.visibility=View.VISIBLE
+                    } else {
+                        binding.noStudent.visibility = View.VISIBLE
                     }
 
                     attendanceAdapter.updateList(attendanceListDated)

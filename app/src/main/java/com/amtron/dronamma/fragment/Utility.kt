@@ -1,25 +1,23 @@
 package com.amtron.dronamma.fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.amtron.dronamma.databinding.FragmentUtilityBinding
+import com.amtron.dronamma.helper.Common.Companion.attendanceList
+import com.amtron.dronamma.helper.Common.Companion.attendanceRef
+import com.amtron.dronamma.helper.Common.Companion.branch
+import com.amtron.dronamma.helper.Common.Companion.studentList
+import com.amtron.dronamma.helper.Common.Companion.studentRef
 import com.amtron.dronamma.model.Attendance
 import com.amtron.dronamma.model.Student
-import com.amtron.dronamma.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.util.Calendar
 
 
@@ -28,17 +26,10 @@ class Utility : Fragment() {
 
     private lateinit var binding: FragmentUtilityBinding
 
-    private lateinit var studentRef: DatabaseReference
-    private lateinit var attendanceRef: DatabaseReference
-    private lateinit var user: User
-    private lateinit var branch: String
 
     private var flag: Boolean = true
 
-    private lateinit var studentList: ArrayList<Student>
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
     private lateinit var currentDate: String
 
     override fun onCreateView(
@@ -52,8 +43,6 @@ class Utility : Fragment() {
         val myYear = cal.get(Calendar.YEAR)
         val myMonth = cal.get(Calendar.MONTH)
         val day = cal.get(Calendar.DAY_OF_MONTH)
-
-        studentList = arrayListOf()
 
 
         val setDate: String = if (day < 10) {
@@ -70,43 +59,17 @@ class Utility : Fragment() {
 
         currentDate = "$myYear-$setMonth-$setDate"
 
-        sharedPreferences =
-            requireActivity().getSharedPreferences("Drona", AppCompatActivity.MODE_PRIVATE)
-        editor = sharedPreferences.edit()
 
 
-        user = Gson().fromJson(
-            sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
-        )
-
-        branch = user.branch.toString()
 
 
-        studentRef = FirebaseDatabase.getInstance().getReference("Students")
-        attendanceRef = FirebaseDatabase.getInstance().getReference("Attendance")
 
-
-        // populate date list
-        attendanceRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                if (snapshot.exists()) {
-
-                    for (emSnap in snapshot.children) {
-                        val attendanceData = emSnap.getValue(Attendance::class.java)
-
-                        if (attendanceData != null && attendanceData.date.toString() == currentDate && attendanceData.branch==branch) {
-                            flag = false
-                            break
-                        }
-                    }
-                }
+        for (attendanceData: Attendance in attendanceList) {
+            if (attendanceData.date.toString() == currentDate && attendanceData.branch == branch) {
+                flag = false
+                break
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(requireActivity(), "$error", Toast.LENGTH_SHORT).show()
-            }
-        })
+        }
 
 
         // populate student list

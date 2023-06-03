@@ -1,10 +1,8 @@
 package com.amtron.dronamma.activity
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -12,7 +10,6 @@ import com.amtron.dronamma.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
-
 
 class LoginActivity : AppCompatActivity() {
 
@@ -31,16 +28,13 @@ class LoginActivity : AppCompatActivity() {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-
         supportActionBar?.title = "Login"
 
         auth = FirebaseAuth.getInstance()
         fireStore = FirebaseFirestore.getInstance()
 
-
-        sharedPreferences = this.getSharedPreferences("Drona", MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("Drona", MODE_PRIVATE)
         editor = sharedPreferences.edit()
-
 
         binding.addNewUser.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
@@ -48,9 +42,7 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
 
-
         binding.login.setOnClickListener {
-
             val email = binding.email.text.toString().trim()
             val password = binding.enterPassword.text.toString().trim()
 
@@ -68,55 +60,38 @@ class LoginActivity : AppCompatActivity() {
 
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "signInWithEmail:success")
                     val user = auth.currentUser
-
                     val uid = user?.uid
-
                     saveDataInSharedPref(uid.toString())
-
-
-                    Toast.makeText(this, "Authentication successful.", Toast.LENGTH_SHORT)
-                        .show()
-                    // Navigate to the main activity
-
+                    Toast.makeText(this, "Authentication successful.", Toast.LENGTH_SHORT).show()
                 } else {
-                    Log.w(TAG, "signInWithEmail:failure", task.exception)
                     Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
                 }
             }
-
-
         }
-
-
     }
 
     private fun saveDataInSharedPref(uid: String) {
-
-
         val dRef = fireStore.collection("Users").document(uid)
 
         dRef.get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     val data = documentSnapshot.data
-
                     editor.putString("user", Gson().toJson(data))
                     editor.apply()
-
 
                     val intent = Intent(this, HomeActivity::class.java)
                     startActivity(intent)
                     finish()
-
-                    Log.d(TAG, Gson().toJson(data))
                 } else {
-                    Log.d(TAG, "No such document")
+                    // Handle the case where the document does not exist
+                    Toast.makeText(this, "User data not found.", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener { exception ->
-                Log.e(TAG, "Error getting document: ", exception)
+                // Handle exceptions
+                Toast.makeText(this, "Error getting user data.", Toast.LENGTH_SHORT).show()
             }
     }
 }

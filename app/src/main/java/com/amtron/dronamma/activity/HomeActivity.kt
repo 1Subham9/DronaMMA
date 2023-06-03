@@ -21,6 +21,11 @@ import com.amtron.dronamma.adapter.ViewPagerAdapter
 import com.amtron.dronamma.databinding.ActivityHomeBinding
 import com.amtron.dronamma.fragment.AddStudent
 import com.amtron.dronamma.fragment.Attendance
+import com.amtron.dronamma.helper.Common
+import com.amtron.dronamma.helper.Common.Companion.branch
+import com.amtron.dronamma.helper.Common.Companion.paymentRef
+import com.amtron.dronamma.helper.Common.Companion.studentRef
+import com.amtron.dronamma.helper.Common.Companion.user
 import com.amtron.dronamma.model.Date
 import com.amtron.dronamma.model.Payment
 import com.amtron.dronamma.model.Student
@@ -42,8 +47,6 @@ import java.util.Calendar
 
 class HomeActivity : AppCompatActivity() {
 
-    private lateinit var branch: String
-    lateinit var user: User
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -51,9 +54,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var studentList: ArrayList<Student>
 
-    private lateinit var paymentRef: DatabaseReference
-    private lateinit var studentRef: DatabaseReference
-    private lateinit var dateRef: DatabaseReference
+
 
     private var flag: Boolean = true
 
@@ -68,8 +69,6 @@ class HomeActivity : AppCompatActivity() {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-
-
         sharedPreferences = this.getSharedPreferences("Drona", MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
@@ -78,12 +77,7 @@ class HomeActivity : AppCompatActivity() {
             sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
         )
 
-
-        branch = user.branch.toString()
-
-        paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
-        studentRef = FirebaseDatabase.getInstance().getReference("Students")
-        dateRef = FirebaseDatabase.getInstance().getReference("Date")
+        branch = user?.branch.toString()
 
         studentList = arrayListOf()
 
@@ -101,7 +95,7 @@ class HomeActivity : AppCompatActivity() {
         val currentMonth = "$setMonth-$myYear"
 
 
-        studentRef.addValueEventListener(object : ValueEventListener {
+     studentRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 if (snapshot.exists()) {
@@ -124,35 +118,35 @@ class HomeActivity : AppCompatActivity() {
         })
 
 
-        paymentRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
 
-                if (snapshot.exists()) {
-
-                    for (emSnap in snapshot.children) {
-                        val paymentData = emSnap.getValue(Payment::class.java)
-
-                        if (paymentData != null && paymentData.date.toString() == currentMonth) {
-                            flag = false
-                            break
-                        }
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@HomeActivity, "$error", Toast.LENGTH_SHORT).show()
-            }
-        })
 
 
         CoroutineScope(Dispatchers.IO).launch {
             withContext(Dispatchers.IO) {
-                Thread.sleep(3000)
-                if (flag) {
-                    enterMonthlyData( currentMonth)
-                }
 
+                paymentRef.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+
+                        if (snapshot.exists()) {
+
+                            for (emSnap in snapshot.children) {
+                                val paymentData = emSnap.getValue(Payment::class.java)
+
+                                if (paymentData != null && paymentData.date.toString() == currentMonth) {
+                                    flag = false
+                                }
+                            }
+
+                            if (flag) {
+                                enterMonthlyData( currentMonth)
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Toast.makeText(this@HomeActivity, "$error", Toast.LENGTH_SHORT).show()
+                    }
+                })
             }
         }
 
@@ -324,12 +318,12 @@ class HomeActivity : AppCompatActivity() {
                         studentData.fees,
                         currentMonth,
                         0,
-                        branch,
+                        Common.branch,
                         studentData.batch,
                         studentData.className
                     )
 
-                    paymentRef.child(paymentId).setValue(payment).addOnCompleteListener {
+                    Common.paymentRef.child(paymentId).setValue(payment).addOnCompleteListener {
 
 
                         Toast.makeText(

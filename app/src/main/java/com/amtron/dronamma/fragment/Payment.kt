@@ -1,7 +1,6 @@
 package com.amtron.dronamma.fragment
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
@@ -15,23 +14,22 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amtron.dronamma.R
 import com.amtron.dronamma.adapter.AdvanceAdapter
 import com.amtron.dronamma.adapter.PaymentAdapter
 import com.amtron.dronamma.databinding.FragmentPaymentBinding
+import com.amtron.dronamma.helper.Common.Companion.branch
+import com.amtron.dronamma.helper.Common.Companion.paymentList
+import com.amtron.dronamma.helper.Common.Companion.paymentRef
+import com.amtron.dronamma.helper.Common.Companion.studentList
+import com.amtron.dronamma.helper.Common.Companion.studentRef
 import com.amtron.dronamma.model.Payment
 import com.amtron.dronamma.model.Student
-import com.amtron.dronamma.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.util.Calendar
 
 
@@ -43,15 +41,13 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     private lateinit var messageDialog: AlertDialog
 
 
-    private lateinit var paymentList: ArrayList<Payment>
     private lateinit var paymentListNew: ArrayList<Payment>
-    private lateinit var advanceList: ArrayList<Student>
     private lateinit var advanceListNew: ArrayList<Student>
 
     private lateinit var screen: String
 
-    private lateinit var paymentRef: DatabaseReference
-    private lateinit var studentRef: DatabaseReference
+    var st:CharSequence=""
+
 
     private lateinit var paymentRecycler: PaymentAdapter
     private lateinit var advanceRecycler: AdvanceAdapter
@@ -62,8 +58,6 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     private lateinit var monthValueNumber: ArrayList<String>
 
 
-
-
     private lateinit var date: String
     private lateinit var currentMonth: String
 
@@ -72,10 +66,6 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
     private lateinit var month: String
     private lateinit var year: String
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
-    private lateinit var user: User
-    private lateinit var branch: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -92,20 +82,10 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         }
 
 
-        sharedPreferences =
-            requireActivity().getSharedPreferences("Drona", AppCompatActivity.MODE_PRIVATE)
-        editor = sharedPreferences.edit()
 
-        user = Gson().fromJson(
-            sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
-        )
-
-        branch = user.branch.toString()
 
         screen = "regular"
 
-        paymentRef = FirebaseDatabase.getInstance().getReference("Payment")
-        studentRef = FirebaseDatabase.getInstance().getReference("Students")
 
         val cal = Calendar.getInstance()
         val myYear = cal.get(Calendar.YEAR)
@@ -113,8 +93,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
 
 
-        paymentList = arrayListOf()
-        advanceList = arrayListOf()
+
         advanceListNew = arrayListOf()
         paymentListNew = arrayListOf()
         monthValue = arrayListOf()
@@ -132,7 +111,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
         }
 
         date = "$setMonth-$myYear"
-        currentMonth="$setMonth-$myYear"
+        currentMonth = "$setMonth-$myYear"
 
 
 
@@ -144,6 +123,12 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+
+                if (s != null) {
+                    st= s
+                }
+
                 paymentListNew.clear()
 
                 for (payment: Payment in paymentList) {
@@ -163,7 +148,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
 
 
-                for (student: Student in advanceList) {
+                for (student: Student in studentList) {
 
                     if (student.branch == branch) {
                         val list: String? = student.name?.lowercase()?.replace(" ", "")
@@ -212,17 +197,34 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
                     for (emSnap in snapshot.children) {
                         val paymentData = emSnap.getValue(Payment::class.java)
-                        if (paymentData != null && paymentData.branch == user.branch) {
+                        if (paymentData != null && paymentData.branch == branch) {
                             paymentList.add(paymentData)
                         }
                     }
 
 
+//                    for (payment: Payment in paymentList) {
+//                        if (payment.date == date) {
+//                            paymentListNew.add(payment)
+//                        }
+//                    }
+
+
                     for (payment: Payment in paymentList) {
-                        if (payment.date == date) {
-                            paymentListNew.add(payment)
+
+                        if (payment.branch == branch && payment.date == date) {
+                            val list: String? = payment.name?.lowercase()?.replace(" ", "")
+                            val input: String = st.toString().lowercase().replace(" ", "")
+
+                            if (input.let { list?.contains(it) } == true) {
+                                paymentListNew.add(payment)
+                            }
                         }
+
                     }
+
+
+
 
                     paymentRecycler.updateList(paymentListNew)
 
@@ -251,22 +253,22 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
                 if (snapshot.exists()) {
 
-                    advanceList.clear()
+                    studentList.clear()
 
                     for (emSnap in snapshot.children) {
                         val studentData = emSnap.getValue(Student::class.java)
 
                         if (studentData != null && studentData.month == 0 && studentData.paid == 1 && studentData.branch == branch) {
 
-                            advanceList.add(studentData)
+                            studentList.add(studentData)
 
                         }
                     }
 
-                    advanceRecycler.updateList(advanceList)
+                    advanceRecycler.updateList(studentList)
 
                     if (screen == "advance") {
-                        if (advanceList.isNotEmpty()) {
+                        if (studentList.isNotEmpty()) {
                             binding.advanceRecycler.visibility = View.VISIBLE
                             binding.advanceComplete.visibility = View.GONE
                         } else {
@@ -312,7 +314,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                     binding.selectDateLayout.visibility = View.GONE
                     binding.noDataAvailable.visibility = View.GONE
 
-                    if (advanceList.isNotEmpty()) {
+                    if (studentList.isNotEmpty()) {
                         binding.advanceRecycler.visibility = View.VISIBLE
                         binding.advanceComplete.visibility = View.GONE
                     } else {
@@ -408,7 +410,7 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
         selectMonth.setOnItemClickListener { parent, view, position, id ->
             monthNumber = monthValueNumber[position].toInt()
-            student.month=monthNumber
+            student.month = monthNumber
 
         }
 
@@ -430,8 +432,8 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
                 val id = student.id.toString()
 
 
-                if(monthNumber==0){
-                    student.paid=0
+                if (monthNumber == 0) {
+                    student.paid = 0
                 }
 
 
@@ -460,7 +462,9 @@ class Payment : Fragment(), PaymentAdapter.ItemClickInterface, AdvanceAdapter.It
 
 
                         Toast.makeText(
-                            requireContext(), "Payment for ${student.name} accepted", Toast.LENGTH_SHORT
+                            requireContext(),
+                            "Payment for ${student.name} accepted",
+                            Toast.LENGTH_SHORT
                         ).show()
 
                     }.addOnFailureListener {

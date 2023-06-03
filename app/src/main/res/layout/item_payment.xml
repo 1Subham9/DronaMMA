@@ -59,8 +59,8 @@
                 <TextView
                     android:id="@+id/attendanceBatch"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:layout_height="match_parent"
                     android:text="Student Batch"
                     android:textColor="@color/black"
                     android:textSize="12sp"
@@ -69,8 +69,8 @@
                 <TextView
                     android:id="@+id/attendanceClass"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:layout_height="match_parent"
                     android:text="Student Class"
                     android:textColor="@color/black"
                     android:textSize="12sp"
@@ -83,10 +83,9 @@
 
                 <TextView
                     android:id="@+id/sendNotification"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:drawablePadding="5dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
                     android:text="Send Notification..>>"
                     android:textColor="@color/green"
                     android:textSize="12sp"

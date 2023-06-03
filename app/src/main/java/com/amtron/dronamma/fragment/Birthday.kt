@@ -13,6 +13,8 @@ import com.amtron.dronamma.R
 import com.amtron.dronamma.adapter.BirthdayAdapter
 import com.amtron.dronamma.adapter.PaymentAdapter
 import com.amtron.dronamma.databinding.FragmentBirthdayBinding
+import com.amtron.dronamma.helper.Common.Companion.branch
+import com.amtron.dronamma.helper.Common.Companion.studentRef
 import com.amtron.dronamma.model.Birthday
 import com.amtron.dronamma.model.Payment
 import com.amtron.dronamma.model.Student
@@ -32,7 +34,6 @@ class Birthday : Fragment() {
 
 
     private lateinit var binding: FragmentBirthdayBinding
-    private lateinit var studentRef: DatabaseReference
     private lateinit var birthdayList: ArrayList<Birthday>
     private lateinit var birthdayAdapter: BirthdayAdapter
 
@@ -41,7 +42,6 @@ class Birthday : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentBirthdayBinding.inflate(inflater, container, false)
-        studentRef = FirebaseDatabase.getInstance().getReference("Students")
 
         birthdayList = arrayListOf()
 
@@ -62,7 +62,7 @@ class Birthday : Fragment() {
                         val studentData = emSnap.getValue(Student::class.java)
 
 
-                        if (studentData != null  && isBirthdayToday(studentData.birthday.toString())) {
+                        if (studentData != null  && isBirthdayToday(studentData.birthday.toString()) && studentData.branch== branch) {
 
                             val age = calculateAge(studentData.birthday.toString())
 

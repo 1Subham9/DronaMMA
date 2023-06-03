@@ -15,8 +15,8 @@ class BirthdayAdapter : RecyclerView.Adapter<BirthdayAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val studentName = itemView.findViewById<TextView>(R.id.birthdayName)
-        val studentAge = itemView.findViewById<TextView>(R.id.birthdayAge)
+        val studentName = itemView.findViewById<TextView>(R.id.birthdayName)!!
+        val studentAge = itemView.findViewById<TextView>(R.id.birthdayAge)!!
 
     }
 

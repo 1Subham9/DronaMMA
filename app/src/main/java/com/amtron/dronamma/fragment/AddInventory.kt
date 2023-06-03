@@ -1,46 +1,33 @@
 package com.amtron.dronamma.fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amtron.dronamma.R
 import com.amtron.dronamma.adapter.InventoryAdapter
 import com.amtron.dronamma.databinding.FragmentAddInventoryBinding
+import com.amtron.dronamma.helper.Common.Companion.branch
+import com.amtron.dronamma.helper.Common.Companion.inventoryList
+import com.amtron.dronamma.helper.Common.Companion.inventoryRef
 import com.amtron.dronamma.model.Inventory
-import com.amtron.dronamma.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 class AddInventory : Fragment(), InventoryAdapter.ItemClickInterface {
 
 
     private lateinit var binding: FragmentAddInventoryBinding
-    private lateinit var inventoryRef: DatabaseReference
     private lateinit var inventoryAdapter: InventoryAdapter
 
-    private lateinit var inventoryList: ArrayList<Inventory>
     private lateinit var messageDialog: AlertDialog
-
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
-    private lateinit var branch: String
-    private lateinit var user: User
 
 
     override fun onCreateView(
@@ -50,22 +37,6 @@ class AddInventory : Fragment(), InventoryAdapter.ItemClickInterface {
 
         // Inflate the layout for this fragment
         binding = FragmentAddInventoryBinding.inflate(inflater, container, false)
-
-
-        sharedPreferences =
-            requireActivity().getSharedPreferences("Drona", AppCompatActivity.MODE_PRIVATE)
-        editor = sharedPreferences.edit()
-
-
-        user = Gson().fromJson(
-            sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
-        )
-
-
-        branch = user.branch.toString()
-
-
-        inventoryRef = FirebaseDatabase.getInstance().getReference("Inventory")
 
         inventoryList = arrayListOf()
 
@@ -128,7 +99,7 @@ class AddInventory : Fragment(), InventoryAdapter.ItemClickInterface {
                     for (emSnap in snapshot.children) {
                         val inventoryData = emSnap.getValue(Inventory::class.java)
 
-                        if (inventoryData != null && inventoryData.branch==branch) {
+                        if (inventoryData != null && inventoryData.branch == branch) {
                             inventoryList.add(inventoryData)
                         }
                     }
@@ -237,8 +208,8 @@ class AddInventory : Fragment(), InventoryAdapter.ItemClickInterface {
                 val id = inventory.id.toString()
 
 
-                inventory.name=itemName.text.toString()
-                inventory.price =itemPrice.text.toString().toDouble()
+                inventory.name = itemName.text.toString()
+                inventory.price = itemPrice.text.toString().toDouble()
 
                 inventoryRef.child(id).setValue(inventory).addOnCompleteListener {
 
@@ -265,6 +236,5 @@ class AddInventory : Fragment(), InventoryAdapter.ItemClickInterface {
 
 
     }
-
 
 }

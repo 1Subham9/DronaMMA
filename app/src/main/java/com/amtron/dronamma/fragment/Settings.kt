@@ -1,34 +1,26 @@
 package com.amtron.dronamma.fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amtron.dronamma.R
 import com.amtron.dronamma.adapter.BatchAndClassAdapter
 import com.amtron.dronamma.databinding.FragmentSettingsBinding
+import com.amtron.dronamma.helper.Common.Companion.batchClassRef
+import com.amtron.dronamma.helper.Common.Companion.branch
 import com.amtron.dronamma.model.BatchClassModel
-import com.amtron.dronamma.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 class Settings : Fragment(), BatchAndClassAdapter.ItemClickInterface {
 
     private lateinit var binding: FragmentSettingsBinding
-    private lateinit var dbref: DatabaseReference
-    private lateinit var branch: String
-    lateinit var user: User
 
     private lateinit var batchName: ArrayList<BatchClassModel>
     private lateinit var className: ArrayList<BatchClassModel>
@@ -41,50 +33,38 @@ class Settings : Fragment(), BatchAndClassAdapter.ItemClickInterface {
     private lateinit var messageDialog: AlertDialog
 
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
-        dbref = FirebaseDatabase.getInstance().getReference("BatchClass")
 
         batchName = arrayListOf()
         className = arrayListOf()
 
-        sharedPreferences =
-            requireActivity().getSharedPreferences("Drona", AppCompatActivity.MODE_PRIVATE)
-        editor = sharedPreferences.edit()
 
-        user = Gson().fromJson(
-            sharedPreferences.getString("user", "").toString(), object : TypeToken<User>() {}.type
-        )
-
-        branch = user.branch.toString()
 
         binding.submitBatchName.setOnClickListener {
 
             if (binding.addNewBatch.text?.isNotEmpty() == true) {
 
-                populateDataBase(branch, 1, binding.addNewBatch.text.toString())
+                branch?.let { it1 -> populateDataBase(it1, 1, binding.addNewBatch.text.toString()) }
 
             }
 
         }
 
         binding.submitClassName.setOnClickListener {
-            if (binding.addNewClass.text?.isNotEmpty() == true) populateDataBase(
-                branch, 0, binding.addNewClass.text.toString()
-            )
+            if (binding.addNewClass.text?.isNotEmpty() == true) branch?.let { it1 ->
+                populateDataBase(
+                    it1, 0, binding.addNewClass.text.toString()
+                )
+            }
         }
 
 
-        dbref.addValueEventListener(object : ValueEventListener {
+        batchClassRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 if (snapshot.exists()) {
@@ -95,7 +75,7 @@ class Settings : Fragment(), BatchAndClassAdapter.ItemClickInterface {
                     for (emSnap in snapshot.children) {
                         val batchClassData = emSnap.getValue(BatchClassModel::class.java)
 
-                        if (batchClassData != null) {
+                        if (batchClassData != null && batchClassData.branch == branch) {
 
                             if (batchClassData.batch == 1) {
                                 batchName.add(batchClassData)
@@ -110,19 +90,19 @@ class Settings : Fragment(), BatchAndClassAdapter.ItemClickInterface {
                     binding.classLoading.visibility = View.GONE
                     binding.batchLoading.visibility = View.GONE
 
-                    if(className.isEmpty()){
+                    if (className.isEmpty()) {
                         binding.classRecyclerView.visibility = View.GONE
                         binding.classNoData.visibility = View.VISIBLE
-                    }else{
+                    } else {
                         binding.classRecyclerView.visibility = View.VISIBLE
                         binding.classNoData.visibility = View.GONE
                     }
 
 
-                    if(batchName.isEmpty()){
+                    if (batchName.isEmpty()) {
                         binding.batchRecyclerView.visibility = View.GONE
                         binding.batchNoData.visibility = View.VISIBLE
-                    }else{
+                    } else {
                         binding.batchRecyclerView.visibility = View.VISIBLE
                         binding.batchNoData.visibility = View.GONE
                     }
@@ -152,14 +132,14 @@ class Settings : Fragment(), BatchAndClassAdapter.ItemClickInterface {
     }
 
     private fun populateDataBase(branch: String, isBatch: Int, name: String) {
-        val id = dbref.push().key!!
+        val id = batchClassRef.push().key!!
 
         val batchClass = BatchClassModel(
             id, branch, name, isBatch
         )
 
 
-        dbref.child(id).setValue(batchClass).addOnCompleteListener {
+        batchClassRef.child(id).setValue(batchClass).addOnCompleteListener {
             Toast.makeText(
                 requireContext(), "$name Added!", Toast.LENGTH_SHORT
             ).show()
@@ -185,14 +165,15 @@ class Settings : Fragment(), BatchAndClassAdapter.ItemClickInterface {
         builder.setPositiveButton("Confirm") { dialogInterface, which ->
 
 
-            val mTask = id?.let { dbref.child(it).removeValue() }
+            val mTask = id?.let { batchClassRef.child(it).removeValue() }
 
             mTask?.addOnSuccessListener {
 
                 Toast.makeText(requireContext(), "$ans deleted ", Toast.LENGTH_LONG).show()
 
             }?.addOnFailureListener { error ->
-                Toast.makeText(requireContext(), "Deleting Err ${error.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Deleting Err ${error.message}", Toast.LENGTH_LONG)
+                    .show()
             }
 
             messageDialog.dismiss()
