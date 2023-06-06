@@ -12,6 +12,31 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+
+        <androidx.cardview.widget.CardView
+            android:background="@drawable/rounded_border"
+            android:layout_margin="5dp"
+            android:elevation="10dp"
+            app:cardCornerRadius="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/logo"
+                android:alpha="0.1"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+
+
+
         <TextView
             android:id="@+id/name"
             android:layout_width="match_parent"
@@ -19,9 +44,8 @@
             android:gravity="center"
             android:layout_margin="5sp"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:background="@drawable/rounded_border"
-            android:padding="10dp"
+            android:textSize="16sp"
+            android:padding="5dp"
             android:fontFamily="@font/roboto_bold"
             android:text="Subham Kumar Ahir"/>
 
@@ -33,30 +57,26 @@
 
             <TextView
                 android:id="@+id/gender"
-                android:layout_margin="5dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:fontFamily="@font/roboto_bold"
                 android:textColor="@color/black"
                 android:text="Gender: Male"
-                android:textSize="14sp"
-                android:background="@drawable/rounded_border"
+                android:textSize="12sp"
                 android:padding="5dp"
                 android:layout_height="match_parent"/>
 
             <TextView
                 android:id="@+id/age"
-                android:layout_margin="5dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:textColor="@color/black"
                 android:fontFamily="@font/roboto_bold"
                 android:gravity="center"
                 android:text="Age: 27"
-                android:textSize="14sp"
-                android:background="@drawable/rounded_border"
-                android:padding="10dp"
+                android:textSize="12sp"
+                android:padding="5dp"
                 android:layout_height="match_parent"/>
 
         </LinearLayout>
@@ -69,30 +89,26 @@
 
             <TextView
                 android:id="@+id/className"
-                android:layout_margin="5dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:textColor="@color/black"
                 android:gravity="center"
                 android:text="Class: MMA"
                 android:fontFamily="@font/roboto_bold"
-                android:textSize="14sp"
-                android:background="@drawable/rounded_border"
-                android:padding="10dp"
+                android:textSize="12sp"
+                android:padding="5dp"
                 android:layout_height="match_parent"/>
 
             <TextView
                 android:id="@+id/batch"
-                android:layout_margin="5dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/roboto_bold"
                 android:gravity="center"
                 android:text="Batch: Batch1"
                 android:textColor="@color/black"
-                android:textSize="14sp"
-                android:background="@drawable/rounded_border"
-                android:padding="10dp"
+                android:textSize="12sp"
+                android:padding="5dp"
                 android:layout_height="match_parent"/>
 
         </LinearLayout>
@@ -102,11 +118,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_margin="5sp"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:background="@drawable/rounded_border"
-            android:padding="10dp"
+            android:textSize="12sp"
+            android:padding="5dp"
             android:fontFamily="@font/roboto_bold"
             android:text="Mobile: 6003690921"/>
 
@@ -116,11 +130,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_margin="5sp"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:background="@drawable/rounded_border"
-            android:padding="10dp"
+            android:textSize="12sp"
+            android:padding="5dp"
             android:fontFamily="@font/roboto_bold"
             android:text="Address:\nHouse no-27, A.G. office Road, Beltola"/>
 
@@ -130,13 +142,106 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_margin="5sp"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:background="@drawable/rounded_border"
-            android:padding="10dp"
+            android:textSize="12sp"
+            android:padding="5dp"
             android:fontFamily="@font/roboto_bold"
             android:text="Payment Type: Regular"/>
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/allTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="All Time" />
+
+            <RadioButton
+                android:id="@+id/monthly"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Monthly" />
+
+            <RadioButton
+                android:id="@+id/yearly"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Yearly" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/selectDateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:id="@+id/monthLayout"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:hint="Select Month"
+                android:minHeight="48dp"
+                app:helperText="Required*"
+                app:helperTextTextColor="@color/red">
+
+                <AutoCompleteTextView
+                    android:id="@+id/spinnerMonth"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawablePadding="5dp"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/yearLayout"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:hint="Select Year"
+                android:minHeight="48dp"
+                app:helperText="Required*"
+                app:helperTextTextColor="@color/red">
+
+                <AutoCompleteTextView
+                    android:id="@+id/spinnerYear"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawablePadding="5dp"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"/>
 
 
 

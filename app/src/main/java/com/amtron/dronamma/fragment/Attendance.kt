@@ -151,13 +151,6 @@ class Attendance : Fragment(), AttendanceAdapter.ItemClickInterface {
             }
         })
 
-
-
-
-
-
-
-
         return binding.root
     }
 
