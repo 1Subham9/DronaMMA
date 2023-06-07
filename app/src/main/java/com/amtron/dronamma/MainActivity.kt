@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this@MainActivity, LoginActivity::class.java)
                     startActivity(intent)
                     finish()
+
                 } else {
                     val intent = Intent(this@MainActivity, HomeActivity::class.java)
                     startActivity(intent)
